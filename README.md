@@ -8,7 +8,7 @@
 - [İsim] — Developer
 
 ## Ürün İsmi
-[Ürün adı]
+Toplantı Asistanı Agent
 
 ## Ürün Açıklaması
 Toplantı kaydını (ses) ya da transkriptini analiz ederek özet, kararlar ve
