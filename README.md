@@ -1,7 +1,5 @@
 # YZTA-Bootcamp-Team40
 
-# Takım 40
-
 ## Takım Rolleri
 - [İsim] — Product Owner
 - [İsim] — Scrum Master (iletişim sorumlusu)
