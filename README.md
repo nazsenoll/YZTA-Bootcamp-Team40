@@ -1,11 +1,11 @@
 # YZTA-Bootcamp-Team40
 
 ## Takım Rolleri
-- [Helin Melike ÇAL] — Product Owner
-- [Ilım Naz ŞENOL] — Scrum Master (iletişim sorumlusu)
-- [A. Bera ONAR] — Developer
-- [Emre GERGİN] — Developer
-- [Servet ACAR] — Developer
+- Helin Melike ÇAL — Product Owner
+- Ilım Naz ŞENOL — Scrum Master (iletişim sorumlusu)
+- A. Bera ONAR — Developer
+- Emre GERGİN — Developer
+- Servet ACAR — Developer
 
 ## Ürün İsmi
 Toplantı Asistanı Agent
