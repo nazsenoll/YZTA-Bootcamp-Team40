@@ -1,7 +1,6 @@
 # YZTA-Bootcamp-Team40
 
-# Takım İsmi
-Team-40
+# Takım 40
 
 ## Takım Rolleri
 - [İsim] — Product Owner
