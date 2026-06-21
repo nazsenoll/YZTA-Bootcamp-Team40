@@ -1,11 +1,11 @@
 # YZTA-Bootcamp-Team40
 
 ## Takım Rolleri
-- [İsim] — Product Owner
-- [İsim] — Scrum Master (iletişim sorumlusu)
-- [İsim] — Developer
-- [İsim] — Developer
-- [İsim] — Developer
+- [Helin Melike ÇAL] — Product Owner
+- [Ilım Naz ŞENOL] — Scrum Master (iletişim sorumlusu)
+- [A. Bera ONAR] — Developer
+- [Emre GERGİN] — Developer
+- [Servet ACAR] — Developer
 
 ## Ürün İsmi
 Toplantı Asistanı Agent
@@ -32,4 +32,4 @@ taslakları üreten yapay zeka destekli toplantı asistanı.
 - Öğrenci kulüpleri / topluluklar
 
 ## Product Backlog
-[Trello/Jira/ClickUp pano linki]
+
