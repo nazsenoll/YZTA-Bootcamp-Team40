@@ -63,6 +63,8 @@ puanı hesaplanmıştır.
 
 **Sprint 1 tamamlanma puanı: 17 / 22**
 
+<img width="1572" height="867" alt="image" src="https://github.com/user-attachments/assets/5a25b66a-de01-4d75-a136-cba3712a9250" />
+
 Sprint için hedeflenen 22 puanın 17'si tamamlanmıştır. Kalan item'lar
 ikinci sprintin backlog'una taşınmıştır.
 
@@ -70,7 +72,7 @@ ikinci sprintin backlog'una taşınmıştır.
 Ekip içi iletişim Notion üzerinden takip edilen görev kartları, Google Meet aracılığıyla düzenli toplantılar ve WhatsApp görüşmeleri ile sağlanmıştır.
 
 ### Kullanılan Araç ###
-- [Notion](https://app.notion.com/p/41311c5edb9446e5ab44098fb74f39dd?v=3bd3e3d92a8a4d4dbc1d1263cbfecb69&source=copy_link)(görev takibi, proje veritabanı, board yönetimi)
+- [Notion] (https://app.notion.com/p/41311c5edb9446e5ab44098fb74f39dd?v=3bd3e3d92a8a4d4dbc1d1263cbfecb69&source=copy_link)(görev takibi, proje veritabanı, board yönetimi)
 - WhatsApp
 - Google Meet
 
@@ -82,14 +84,14 @@ Ekip içi iletişim Notion üzerinden takip edilen görev kartları, Google Meet
 - Frontend mockup hazırlama — Ilım Naz (Öncelik: High)
 - Backend API entegrasyonu — Emre (Öncelik: High)
 - LLM sınıflandırma, özetleme ve karar tespiti — Helin (Öncelik: High)
-- Sprint 1 Kapanış Toplantısı yapıldı. — Helin, Servet, Ahmet Bera, Ilım Naz (Öncelik: High)
+- Sprint 1 Kapanış Toplantısı yapıldı. — Helin, Ilım Naz, Ahmet Bera, Emre, Servet (Öncelik: High)
 
 ### In Progress (2) ###
 - Hafıza modülü kurulumu — Servet (Öncelik: Medium, Sprint 1 & Sprint 2)
 - STT model denemeleri — Ahmet Bera (Öncelik: Medium, Sprint 1 & Sprint 2)
 
 ### Planned (1) ###
-- Sprint 2 taskleri için toplantı planlanacak — Helin, Ahmet Bera, Servet, Ilım Naz (Öncelik: High)
+- Sprint 2 taskleri için toplantı planlanacak — Helin, Ilım Naz, Ahmet Bera, Emre, Servet (Öncelik: High)
 
 
 ## Sprint Review ## 
@@ -98,7 +100,7 @@ Ekip içi iletişim Notion üzerinden takip edilen görev kartları, Google Meet
 - STT model denemeleri ve hafıza modülü kurulumu Sprint 2'ye taşınarak devam etmektedir.
 
 ### Sprint Review Katılımcıları ###
-Helin, Emre, Ahmet Bera, Servet, Ilım Naz
+- Helin, Ilım Naz, Ahmet Bera, Emre, Servet
 
 ## Sprint Retrospective ##
 
