@@ -41,16 +41,36 @@ taslakları üreten yapay zeka destekli toplantı asistanı.
 # SPRINT 1
 
 Sprint Tarih Aralığı: 28 Haziran – 5 Temmuz
-Sprint 1 süreci ile ilgili tüm görseller buradadır. https://canva.link/0zsy7vjj6uxodpf 
+[Sprint 1 süreci](https://canva.link/0zsy7vjj6uxodpf) ile ilgili tüm görseller buradadır.
 
 ## Sprint içi puan değerlendirmesi ##
-Sprint içi puan değerlendirmesi 22 olarak belirlenmiştir.
+
+**Sprint içi puan değerlendirmesi:** 22 puan olarak belirlenmiştir.
+
+### Puanlama Sistemi
+
+Backlog item'ları önceliklerine göre puanlanmıştır. Öncelik, bir görevin
+projenin ilerlemesi için ne kadar kritik olduğuna göre belirlenmiştir:
+
+| Öncelik | Puan |
+|---------|------|
+| High (Yüksek)  | 3 |
+| Medium (Orta)  | 2 |
+| Low (Düşük)    | 1 |
+
+Her sprintte tamamlanan item'ların puanları toplanarak sprintin tamamlanma
+puanı hesaplanmıştır.
+
+**Sprint 1 tamamlanma puanı: 17 / 22**
+
+Sprint için hedeflenen 22 puanın 17'si tamamlanmıştır. Kalan item'lar
+ikinci sprintin backlog'una taşınmıştır.
 
 ## Daily Scrum ## 
-Ekip içi iletişim Notion üzerinden takip edilen görev kartları, Google Meet aracılığıyla düzenli toplantılar ve WhatsApp görüşmeleri üzeirnden sağlanmıştır.
+Ekip içi iletişim Notion üzerinden takip edilen görev kartları, Google Meet aracılığıyla düzenli toplantılar ve WhatsApp görüşmeleri ile sağlanmıştır.
 
 ### Kullanılan Araç ###
-- Notion (görev takibi, proje veritabanı, board yönetimi) https://app.notion.com/p/41311c5edb9446e5ab44098fb74f39dd?v=3bd3e3d92a8a4d4dbc1d1263cbfecb69&source=copy_link
+- [Notion (görev takibi, proje veritabanı, board yönetimi)](https://app.notion.com/p/41311c5edb9446e5ab44098fb74f39dd?v=3bd3e3d92a8a4d4dbc1d1263cbfecb69&source=copy_link)
 - WhatsApp
 - Google Meet
 
@@ -73,7 +93,7 @@ Ekip içi iletişim Notion üzerinden takip edilen görev kartları, Google Meet
 
 
 ## Sprint Review ## 
-- Proje mimarisi netleştirilmiş, 6 rol arasında görev dağılımı yapılmış ve her modülün ilk teknik adımları atılmıştır. 
+- Proje mimarisi netleştirilmiş, 5 rol arasında görev dağılımı yapılmış ve her modülün ilk teknik adımları atılmıştır. 
 - Frontend mockup'ı ve Backend API bağlantıları tamamlanmış, LLM sınıflandırma/özetleme akışı kurulmuştur. 
 - STT model denemeleri ve hafıza modülü kurulumu Sprint 2'ye taşınarak devam etmektedir.
 
