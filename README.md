@@ -41,6 +41,7 @@ taslakları üreten yapay zeka destekli toplantı asistanı.
 # SPRINT 1
 
 Sprint Tarih Aralığı: 28 Haziran – 5 Temmuz
+Sprint 1 süreci ile ilgili tüm görseller buradadır. https://canva.link/0zsy7vjj6uxodpf 
 
 ## Sprint içi puan değerlendirmesi ##
 Sprint içi puan değerlendirmesi 22 olarak belirlenmiştir.
@@ -49,37 +50,35 @@ Sprint içi puan değerlendirmesi 22 olarak belirlenmiştir.
 Ekip içi iletişim Notion üzerinden takip edilen görev kartları, Google Meet aracılığıyla düzenli toplantılar ve WhatsApp görüşmeleri üzeirnden sağlanmıştır.
 
 ### Kullanılan Araç ###
-- Notion (görev takibi, proje veritabanı, board yönetimi)
+- Notion (görev takibi, proje veritabanı, board yönetimi) https://app.notion.com/p/41311c5edb9446e5ab44098fb74f39dd?v=3bd3e3d92a8a4d4dbc1d1263cbfecb69&source=copy_link
 - WhatsApp
 - Google Meet
 
 ## Sprint 1 Board Durumu ##
+<img width="1572" height="867" alt="image" src="https://github.com/user-attachments/assets/e936bf22-bf89-4301-8c87-960239f9352a" />
 
 ### Done (5) ###
 - Proje mimarisi tasarımı — Toplantı kaydı → STT → özet/karar tespiti → görev-kişi eşleştirme → onay ekranı → Agent → Notion/Mail akışının belirlenmesi. (Öncelik: High)
-- Frontend mockup hazırlama — Ilım Naz Şenol (Öncelik: High)
+- Frontend mockup hazırlama — Ilım Naz (Öncelik: High)
 - Backend API entegrasyonu — Emre (Öncelik: High)
-- LLM sınıflandırma, özetleme ve karar tespiti — Helin Melike Çal (Öncelik: High)
-- Sprint 1 Kapanış Toplantısı yapıldı. — Helin, Servet, Ahmet Bera, Ilım Naz Şenol (Öncelik: High)
-
+- LLM sınıflandırma, özetleme ve karar tespiti — Helin (Öncelik: High)
+- Sprint 1 Kapanış Toplantısı yapıldı. — Helin, Servet, Ahmet Bera, Ilım Naz (Öncelik: High)
 
 ### In Progress (2) ###
-Hafıza modülü kurulumu — Servet (Öncelik: Medium, Sprint 1 & Sprint 2)
-STT model denemeleri — Ahmet Bera (Öncelik: Medium, Sprint 1 & Sprint 2)
-
+- Hafıza modülü kurulumu — Servet (Öncelik: Medium, Sprint 1 & Sprint 2)
+- STT model denemeleri — Ahmet Bera (Öncelik: Medium, Sprint 1 & Sprint 2)
 
 ### Planned (1) ###
-Sprint 2 taskleri için toplantı planlanacak — Helin, Ahmet Bera, Servet, Ilım Naz Şenol (Öncelik: High)
+- Sprint 2 taskleri için toplantı planlanacak — Helin, Ahmet Bera, Servet, Ilım Naz (Öncelik: High)
 
 
 ## Sprint Review ## 
-
--Proje mimarisi netleştirilmiş, 6 rol arasında görev dağılımı yapılmış ve her modülün ilk teknik adımları atılmıştır. 
--Frontend mockup'ı ve Backend API bağlantıları tamamlanmış, LLM sınıflandırma/özetleme akışı kurulmuştur. 
--STT model denemeleri ve hafıza modülü kurulumu Sprint 2'ye taşınarak devam etmektedir.
+- Proje mimarisi netleştirilmiş, 6 rol arasında görev dağılımı yapılmış ve her modülün ilk teknik adımları atılmıştır. 
+- Frontend mockup'ı ve Backend API bağlantıları tamamlanmış, LLM sınıflandırma/özetleme akışı kurulmuştur. 
+- STT model denemeleri ve hafıza modülü kurulumu Sprint 2'ye taşınarak devam etmektedir.
 
 ### Sprint Review Katılımcıları ###
-Helin Melike Çal, Emre, Ahmet Bera, Servet, Ilım Naz Şenol
+Helin, Emre, Ahmet Bera, Servet, Ilım Naz
 
 ## Sprint Retrospective ##
 
