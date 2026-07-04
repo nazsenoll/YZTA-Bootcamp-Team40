@@ -33,4 +33,4 @@ taslakları üreten yapay zeka destekli toplantı asistanı.
 
 ## Product Backlog
 
-## SPRINT 1
+# SPRINT 1
