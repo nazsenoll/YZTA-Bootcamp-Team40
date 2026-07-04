@@ -1,11 +1,16 @@
 # YZTA-Bootcamp-Team40
 
 ## Takım Rolleri
-- Helin Melike ÇAL — Product Owner
-- Ilım Naz ŞENOL — Scrum Master (iletişim sorumlusu)
-- A. Bera ONAR — Developer
-- Emre GERGİN — Developer
-- Servet ACAR — Developer
+
+| Rol | İsim |
+| :--- | :--- |
+| **Product Owner** | Helin Melike ÇAL |
+| **Scrum Master** | Ilım Naz ŞENOL |
+| **Developer** | A. Bera ONAR |
+| **Developer** | Emre GERGİN |
+| **Developer** | Servet ACAR |
+
+# ÜRÜN BİLGİLERİ
 
 ## Ürün İsmi
 JotMail - Toplantı Asistanı Agent
