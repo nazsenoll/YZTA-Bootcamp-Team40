@@ -63,8 +63,6 @@ puanı hesaplanmıştır.
 
 **Sprint 1 tamamlanma puanı: 17 / 22**
 
-<img width="1572" height="867" alt="image" src="https://github.com/user-attachments/assets/5a25b66a-de01-4d75-a136-cba3712a9250" />
-
 Sprint için hedeflenen 22 puanın 17'si tamamlanmıştır. Kalan item'lar
 ikinci sprintin backlog'una taşınmıştır.
 
