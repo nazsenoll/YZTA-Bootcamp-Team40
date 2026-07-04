@@ -4,7 +4,7 @@
 
 | İsim | Rol | LinkedIn |
 | :--- | :--- | :---: |
-| **Helin Melike ÇAL** | Product Owner | <a href="LINKEDIN_LINKI" target="_blank"><img src="https://img.icons8.com/color/1200/linkedin.jpg" alt="LinkedIn" height="22"></a> |
+| **Helin Melike ÇAL** | Product Owner | <a href="https://www.linkedin.com/in/helin-melike-%C3%A7al-592680222/" target="_blank"><img src="https://img.icons8.com/color/1200/linkedin.jpg" alt="LinkedIn" height="22"></a> |
 | **Ilım Naz ŞENOL** | Scrum Master | <a href="https://www.linkedin.com/in/%C4%B1l%C4%B1mnaz%C5%9Fenol" target="_blank"><img src="https://img.icons8.com/color/1200/linkedin.jpg" alt="LinkedIn" height="22"></a> |
 | **A. Bera ONAR** | Developer | <a href="LINKEDIN_LINKI" target="_blank"><img src="https://img.icons8.com/color/1200/linkedin.jpg" alt="LinkedIn" height="22"></a> |
 | **Emre GERGİN** | Developer | <a href="LINKEDIN_LINKI" target="_blank"><img src="https://img.icons8.com/color/1200/linkedin.jpg" alt="LinkedIn" height="22"></a> |
