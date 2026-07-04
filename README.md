@@ -40,8 +40,8 @@ taslakları üreten yapay zeka destekli toplantı asistanı.
 
 # SPRINT 1
 
-Sprint Tarih Aralığı: 28 Haziran – 5 Temmuz
-[Sprint 1 süreci](https://canva.link/0zsy7vjj6uxodpf) ile ilgili tüm görseller buradadır.
+- Sprint Tarih Aralığı: 28 Haziran – 5 Temmuz
+- [Sprint 1 süreci](https://canva.link/0zsy7vjj6uxodpf) ile ilgili tüm görseller buradadır.
 
 ## Sprint içi puan değerlendirmesi ##
 
