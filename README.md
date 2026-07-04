@@ -70,38 +70,38 @@ ikinci sprintin backlog'una taşınmıştır.
 ## Daily Scrum ## 
 Ekip içi iletişim; Notion üzerinde yürütülen görev kartları, Google Meet aracılığıyla gerçekleştirilen düzenli toplantılar ve WhatsApp görüşmeleri ile sağlanmıştır.
 
-### Kullanılan Araçlar ###
+### Kullanılan Araçlar 
 - [Notion](https://app.notion.com/p/41311c5edb9446e5ab44098fb74f39dd?v=3bd3e3d92a8a4d4dbc1d1263cbfecb69&source=copy_link) (görev takibi, proje veritabanı, board yönetimi)
 - WhatsApp
 - Google Meet
 
-## Sprint 1 Board Durumu ##
+## Sprint 1 Board Durumu 
 <img width="1572" height="867" alt="image" src="https://github.com/user-attachments/assets/e936bf22-bf89-4301-8c87-960239f9352a" />
 
-### Done (5) ###
+### Done (5) 
 - Proje mimarisi tasarımı — Toplantı kaydı → STT → özet/karar tespiti → görev-kişi eşleştirme → onay ekranı → Agent → Notion/Mail akışının belirlenmesi. (Öncelik: High)
 - Frontend mockup hazırlama — Ilım Naz (Öncelik: High)
 - Backend API entegrasyonu — Emre (Öncelik: High)
 - LLM sınıflandırma, özetleme ve karar tespiti — Helin (Öncelik: High)
 - Sprint 1 Kapanış Toplantısı yapıldı. — Helin, Ilım Naz, Ahmet Bera, Emre, Servet (Öncelik: High)
 
-### In Progress (2) ###
+### In Progress (2) 
 - Hafıza modülü kurulumu — Servet (Öncelik: Medium, Sprint 1 & Sprint 2)
 - STT model denemeleri — Ahmet Bera (Öncelik: Medium, Sprint 1 & Sprint 2)
 
-### Planned (1) ###
+### Planned (1) 
 - Sprint 2 taskleri için toplantı planlanacak — Helin, Ilım Naz, Ahmet Bera, Emre, Servet (Öncelik: High)
 
 
-## Sprint Review ## 
+## Sprint Review 
 - Proje mimarisi netleştirilmiş, 5 rol arasında görev dağılımı yapılmış ve her modülün ilk teknik adımları atılmıştır. 
 - Frontend mockup'ı ve Backend API bağlantıları tamamlanmış, LLM sınıflandırma/özetleme akışı kurulmuştur. 
 - STT model denemeleri ve hafıza modülü kurulumu Sprint 2'ye taşınarak devam etmektedir.
 
-### Sprint Review Katılımcıları ###
+### Sprint Review Katılımcıları 
 - Helin, Ilım Naz, Ahmet Bera, Emre, Servet
 
-## Sprint Retrospective ##
+## Sprint Retrospective 
 
 - Proje mimarisinin net biçimde tanımlanması ekibin paralel çalışmasını kolaylaştırmıştır.
 - STT ve Hafıza modüllerinin süre gerektirmesi nedeniyle bu iki iş kalemi Sprint 2'ye devam ettirilmiştir.
