@@ -6,7 +6,7 @@
 | :--- | :--- |
 | **Product Owner** | Helin Melike ÇAL |
 | **Scrum Master** | Ilım Naz ŞENOL |
-| **Developer** | A. Bera ONAR |
+| **Developer** | Ahmet Bera ONAR |
 | **Developer** | Emre GERGİN |
 | **Developer** | Servet ACAR |
 
