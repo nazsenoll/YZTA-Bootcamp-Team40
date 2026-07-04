@@ -2,13 +2,13 @@
 
 ## Takım Rolleri
 
-| Rol | İsim |
-| :--- | :--- |
-| **Product Owner** | Helin Melike ÇAL |
-| **Scrum Master** | Ilım Naz ŞENOL |
-| **Developer** | Ahmet Bera ONAR |
-| **Developer** | Emre GERGİN |
-| **Developer** | Servet ACAR |
+| İsim | Rol | LinkedIn |
+| :--- | :--- | :---: |
+| **Helin Melike ÇAL** | Product Owner | <a href="LINKEDIN_LINKINI_BURAYA_YAZIN"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=flat&logo=linkedin&logoColor=white" alt="LinkedIn" height="22"></a> |
+| **Ilım Naz ŞENOL** | Scrum Master | <a href="www.linkedin.com/in/ılımnazşenol"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=flat&logo=linkedin&logoColor=white" alt="LinkedIn" height="22"></a> |
+| **A. Bera ONAR** | Developer | <a href="LINKEDIN_LINKINI_BURAYA_YAZIN"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=flat&logo=linkedin&logoColor=white" alt="LinkedIn" height="22"></a> |
+| **Emre GERGİN** | Developer | <a href="LINKEDIN_LINKINI_BURAYA_YAZIN"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=flat&logo=linkedin&logoColor=white" alt="LinkedIn" height="22"></a> |
+| **Servet ACAR** | Developer | <a href="LINKEDIN_LINKINI_BURAYA_YAZIN"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=flat&logo=linkedin&logoColor=white" alt="LinkedIn" height="22"></a> |
 
 # ÜRÜN BİLGİLERİ
 
