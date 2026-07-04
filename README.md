@@ -69,7 +69,7 @@ Sprint için hedeflenen 22 puanın 17'si tamamlanmıştır. Kalan item'lar
 ikinci sprintin backlog'una taşınmıştır.
 
 ## Daily Scrum ## 
-Ekip içi iletişim Notion üzerinden takip edilen görev kartları, Google Meet aracılığıyla düzenli toplantılar ve WhatsApp görüşmeleri ile sağlanmıştır.
+Ekip içi iletişim; Notion üzerinde yürütülen görev kartları, Google Meet aracılığıyla gerçekleştirilen düzenli toplantılar ve WhatsApp görüşmeleri ile sağlanmıştır.
 
 ### Kullanılan Araçlar ###
 - [Notion](https://app.notion.com/p/41311c5edb9446e5ab44098fb74f39dd?v=3bd3e3d92a8a4d4dbc1d1263cbfecb69&source=copy_link) (görev takibi, proje veritabanı, board yönetimi)
