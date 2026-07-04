@@ -72,7 +72,7 @@ ikinci sprintin backlog'una taşınmıştır.
 Ekip içi iletişim Notion üzerinden takip edilen görev kartları, Google Meet aracılığıyla düzenli toplantılar ve WhatsApp görüşmeleri ile sağlanmıştır.
 
 ### Kullanılan Araç ###
-- [Notion] (https://app.notion.com/p/41311c5edb9446e5ab44098fb74f39dd?v=3bd3e3d92a8a4d4dbc1d1263cbfecb69&source=copy_link)(görev takibi, proje veritabanı, board yönetimi)
+- [Notion] (https://app.notion.com/p/41311c5edb9446e5ab44098fb74f39dd?v=3bd3e3d92a8a4d4dbc1d1263cbfecb69&source=copy_link) (görev takibi, proje veritabanı, board yönetimi)
 - WhatsApp
 - Google Meet
 
