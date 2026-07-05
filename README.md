@@ -100,7 +100,7 @@ Ekip içi iletişim; Notion üzerinde yürütülen görev kartları, Google Meet
 
 Sprint 1 sürecinde JotMail'in ana ekranına ait arayüz mock'u hazırlanmıştır. Ekran; bir toplantının konuşmacı ayrımlı transkriptini, görev ve kararların renkli olarak vurgulandığı analiz görünümünü ve sağ tarafta yapılandırılmış çıktıyı (özet, kararlar, kişilere atanmış görevler) bir arada gösterir. Böylece toplantı kaydından onaya hazır aksiyonlara uzanan akış tek ekranda görüntülenebilmektedir.
 
-<img width="1366" height="648" alt="JotMail — Toplantı Analiz ve Yapılandırılmış Çıktı ekranı" src="https://github.com/user-attachments/assets/40d8d0f2-641f-40e3-ad04-1dfbb8ec986f" />
+<img width="1351" height="591" alt="image (1)" src="https://github.com/user-attachments/assets/ecd08562-2aa6-4d4e-9a9e-151a7caaebeb" />
 
 Ürüne ait diğer arayüz ekranları ve tasarım görsellerine [bu Canva bağlantısından](https://canva.link/0zsy7vjj6uxodpf) ulaşabilirsiniz.
 
