@@ -49,7 +49,7 @@ taslakları üreten yapay zeka destekli toplantı asistanı.
 - **Sprint Tarih Aralığı:** 28 Haziran – 5 Temmuz
 - [Sprint 1 süreci](https://canva.link/0zsy7vjj6uxodpf) ile ilgili tüm görseller buradadır.
 
-## Sprint içi puan değerlendirmesi ##
+## Sprint içi puan değerlendirmesi 
 **Sprint içi puan değerlendirmesi:** 22 puan olarak belirlenmiştir.
 
 ### Puanlama Sistemi
@@ -71,7 +71,7 @@ puanı hesaplanmıştır.
 Sprint için hedeflenen 22 puanın 17'si tamamlanmıştır. Kalan item'lar
 ikinci sprintin backlog'una taşınmıştır.
 
-## Daily Scrum ## 
+## Daily Scrum 
 Ekip içi iletişim; Notion üzerinde yürütülen görev kartları, Google Meet aracılığıyla gerçekleştirilen düzenli toplantılar ve WhatsApp görüşmeleri ile sağlanmıştır.
 
 ### Kullanılan Araçlar 
