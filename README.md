@@ -31,8 +31,7 @@ taslakları üreten yapay zeka destekli toplantı asistanı.
 - Onay ekranı (kullanıcı task/mail'leri onaylar)
 
 ## Sistem Mimarisi
-<img width="781" height="551" alt="image" src="https://github.com/user-attachments/assets/35fabf69-4f10-4624-9c27-f1a0c92f8194" />
-
+<img width="552" height="525" alt="image" src="https://github.com/user-attachments/assets/e4437dd4-e252-4560-8c4b-12057ac0de38" />
 <img width="660" height="422" alt="image" src="https://github.com/user-attachments/assets/cd22e25e-6ef2-4179-872a-692dc6e28daf" />
 
 
