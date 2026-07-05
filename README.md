@@ -31,7 +31,9 @@ taslakları üreten yapay zeka destekli toplantı asistanı.
 - Onay ekranı (kullanıcı task/mail'leri onaylar)
 
 ## Sistem Mimarisi
-| <img src="https://github.com/user-attachments/assets/35fabf69-4f10-4624-9c27-f1a0c92f8194" height="350" style="object-fit: cover;" /> | <img src="https://github.com/user-attachments/assets/cd22e25e-6ef2-4179-872a-692dc6e28daf" height="350" style="object-fit: cover;" /> |
+<img src="https://github.com/user-attachments/assets/35fabf69-4f10-4624-9c27-f1a0c92f8194" width="600" height="400" style="object-fit: cover; display: block; margin-bottom: 10px;" />
+
+<img src="https://github.com/user-attachments/assets/cd22e25e-6ef2-4179-872a-692dc6e28daf" width="600" height="400" style="object-fit: cover; display: block;" />
 
 
 ## Hedef Kitle
