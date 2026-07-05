@@ -30,6 +30,12 @@ taslakları üreten yapay zeka destekli toplantı asistanı.
 - Katılımcı ve geçmiş toplantı hafızası
 - Onay ekranı (kullanıcı task/mail'leri onaylar)
 
+## Sistem Mimarisi
+<img width="781" height="551" alt="image" src="https://github.com/user-attachments/assets/35fabf69-4f10-4624-9c27-f1a0c92f8194" />
+
+<img width="660" height="422" alt="image" src="https://github.com/user-attachments/assets/cd22e25e-6ef2-4179-872a-692dc6e28daf" />
+
+
 ## Hedef Kitle
 - Uzaktan/hibrit çalışan ekipler
 - Ajanslar ve küçük şirketler
