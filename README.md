@@ -46,12 +46,10 @@ taslakları üreten yapay zeka destekli toplantı asistanı.
 - [Notion linki](https://app.notion.com/p/41311c5edb9446e5ab44098fb74f39dd?v=3bd3e3d92a8a4d4dbc1d1263cbfecb69&source=copy_link)
 
 # SPRINT 1
-
-- Sprint Tarih Aralığı: 28 Haziran – 5 Temmuz
+- **Sprint Tarih Aralığı:** 28 Haziran – 5 Temmuz
 - [Sprint 1 süreci](https://canva.link/0zsy7vjj6uxodpf) ile ilgili tüm görseller buradadır.
 
 ## Sprint içi puan değerlendirmesi ##
-
 **Sprint içi puan değerlendirmesi:** 22 puan olarak belirlenmiştir.
 
 ### Puanlama Sistemi
@@ -108,8 +106,8 @@ Ekip içi iletişim; Notion üzerinde yürütülen görev kartları, Google Meet
 - Helin, Ilım Naz, Ahmet Bera, Emre, Servet
 
 ## Sprint Retrospective 
-
 - Proje mimarisinin net biçimde tanımlanması ekibin paralel çalışmasını kolaylaştırmıştır.
 - STT ve Hafıza modüllerinin süre gerektirmesi nedeniyle bu iki iş kalemi Sprint 2'ye devam ettirilmiştir.
 - Sprint 2 planlaması için ayrı bir toplantı yapılması kararlaştırılmıştır.
+- Sprint 2 sürecinde ürünü daha iyi yansıtacak bir logo tasarımı için detaylı çalışmalar yapılmasına karar verilmiştir.
 - Sprint 1 kapanış toplantısı yapılarak tamamlanan işler gözden geçirilmiş, tamamlanamayan maddelerin (STT model denemeleri ve hafıza modülü kurulumu) ikinci sprinte aktarılmasına karar verilmiştir.
