@@ -43,7 +43,7 @@ taslakları üreten yapay zeka destekli toplantı asistanı.
 - Öğrenci kulüpleri / topluluklar
 
 ## Product Backlog
-- [Notion linki](https://app.notion.com/p/41311c5edb9446e5ab44098fb74f39dd?v=3bd3e3d92a8a4d4dbc1d1263cbfecb69&source=copy_link)
+-  Product Backlog, [Notion](https://app.notion.com/p/41311c5edb9446e5ab44098fb74f39dd?v=3bd3e3d92a8a4d4dbc1d1263cbfecb69&source=copy_link) board'u üzerinde önceliklendirilmiş görev kartları halinde yönetilmektedir.
 
 # SPRINT 1
 - **Sprint Tarih Aralığı:** 28 Haziran – 5 Temmuz
