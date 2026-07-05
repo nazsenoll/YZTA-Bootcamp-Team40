@@ -13,7 +13,7 @@
 # ÜRÜN BİLGİLERİ
 
 ## Ürün İsmi
-JotMail - Toplantı Asistanı Agent
+**JotMail** - Toplantı Asistanı Agent
 
 ## Ürün Açıklaması
 Toplantı kaydını (ses) ya da transkriptini analiz ederek özet, kararlar ve
