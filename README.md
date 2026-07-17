@@ -39,9 +39,8 @@ Türkçe yorum olarak sunar.
 
 ## Sistem Mimarisi
 
-Akış: Kullanıcı sorusu → Şema okuma → LLM-1 (SQL üretimi) → Güvenlik denetimi
-(kod tarafı + rol kontrolü) → Sorgu çalıştırma → LLM-3 (yorumlama + grafik
-önerisi) → Grafik üretimi → Kullanıcıya sunum
+<img width="1693" height="929" alt="image" src="https://github.com/user-attachments/assets/ed3f235d-790c-40cd-b334-e8070ce7bf23" />
+
 
 ## Product Backlog
 - Product Backlog, [Notion](https://app.notion.com/p/41311c5edb9446e5ab44098fb74f39dd?v=3bd3e3d92a8a4d4dbc1d1263cbfecb69&source=copy_link) board'u üzerinde önceliklendirilmiş görev kartları halinde yönetilmektedir.
@@ -120,34 +119,20 @@ Sprint 1 sürecinde JotMail'in ana ekranına ait arayüz mock'u hazırlanmışt�
 # SPRINT 2
 
 - **Sprint Tarih Aralığı:** 6 Temmuz – 19 Temmuz
-- [BURAYA: Sprint 2 görselleri linki]
+- [Sprint 2 süreci](https://canva.link/0zsy7vjj6uxodpf) ile ilgili tüm görseller buradadır.
 
 ## Proje Kapsamının Yeniden Değerlendirilmesi
 
-Sprint 2'nin başında proje kapsamı yeniden değerlendirilmiştir. İlk sprintte
-tasarlanan JotMail (toplantı asistanı) projesi; STT, konuşmacı ayrımı, agent
-orkestrasyonu ve çoklu dış servis entegrasyonu (Notion, Gmail) içerdiğinden,
-kalan sürede sağlıklı bir şekilde tamamlanamayacağı görülmüştür.
-
-Bu nedenle ekip, aynı doğal dil işleme yetkinliklerini kullanan ancak kapsamı
-kalan süreye uygun, çalışır bir ürün ortaya koyabileceğimiz **SQL AI Analyst**
-projesine geçiş yapmıştır. Yeni proje; agent mimarisi, ses ve görüntü işleme
-içermeyen, sıralı LLM çağrılarından oluşan doğrusal bir pipeline üzerine
-kurulmuştur.
+Sprint 2'nin başında proje kapsamı yeniden değerlendirilmiştir. İlk sprintte tasarlanan JotMail (toplantı asistanı) projesi; STT, konuşmacı ayrımı, agent orkestrasyonu ve çoklu dış servis entegrasyonu (Notion, Gmail) gibi kapsamlı bileşenler içermektedir. Hem bu bileşenlerin gerektirdiği geliştirme süresi hem de ses işleme modellerinin ihtiyaç duyduğu donanımın ekibin mevcut imkanlarıyla karşılanamaması nedeniyle, projenin kalan sürede sağlıklı bir şekilde tamamlanamayacağı görülmüştür.
 
 Kapsam değişikliği kararı sonrasında ürün fikri, mimari ve backlog yeniden
 oluşturulmuş ve geliştirmeye aynı sprint içinde başlanmıştır.
 
 ## Sprint içi puan değerlendirmesi
+**Sprint içi puan değerlendirmesi:** 34 puan olarak belirlenmiş olup, **Sprint 2 tamamlanma puanı: 29 / 34**
 
-**Sprint içi puan değerlendirmesi:** [BURAYA: hedef puan] puan olarak belirlenmiştir.
+Sprint için hedeflenen 34 puanın 29'u tamamlanmıştır.
 
-Puanlama sistemi Sprint 1 ile aynıdır (High: 3, Medium: 2, Low: 1).
-
-**Sprint 2 tamamlanma puanı: [BURAYA: X] / [BURAYA: Y]**
-
-[BURAYA: Kısa açıklama — hedefe ulaşıldıysa belirtin, ulaşılmadıysa kalan
-item'ların Sprint 3'e taşındığını yazın]
 
 ## Geliştirilen Yapı
 
@@ -167,16 +152,9 @@ Sprint 2 sonunda uçtan uca çalışan bir uygulama ortaya çıkarılmıştır.
 
 **`app.py` — Flask uygulaması ve API katmanı**
 Uygulamanın giriş noktası ve tüm modülleri birbirine bağlayan katman.
-Uç noktalar:
-- `POST /api/connect` — veritabanı bağlantısı kurar, şemayı okur
-- `POST /api/disconnect` — bağlantıyı kapatır
-- `GET /api/status` — bağlantı durumunu döner
-- `POST /api/ask` — doğal dil sorusunu işler, SQL üretir, çalıştırır, yorumlar
-- `POST /api/execute` — kullanıcı onayından sonra yazma sorgusunu çalıştırır
 
 **`llm.py` — LLM pipeline**
-Sıralı ve sabit üç LLM çağrısı içerir. Bu bir agent değildir; LLM hiçbir zaman
-kendi kendine ne zaman çalışacağına karar vermez, akış kod tarafından belirlenir.
+Sıralı ve sabit üç LLM çağrısı içerir.
 - `generate_sql()` — Türkçe soru + veritabanı şeması + kullanıcı rolü → T-SQL
   sorgusu. JSON çıktı: `sql`, `query_type`, `aciklama`, `uyari`
 - `fix_sql()` — sorgu hata verirse tek seferlik düzeltme denemesi (döngü değil)
@@ -196,9 +174,8 @@ LLM'in önerdiği grafik türüne göre (bar / line / pie) matplotlib ile grafik
 üretir ve base64 PNG olarak döner. Veri grafiğe uygun değilse grafik üretmez.
 
 **Arayüz (`templates/`, `static/`)**
-Sohbet akışı şeklinde tasarlanmış tek sayfalık arayüz. Bağlantı paneli, rol
-seçimi, soru kutusu; her cevapta üretilen SQL, sonuç tablosu, grafik ve yorum
-gösterilir. Yazma işlemlerinde onay bileşeni devreye girer.
+Sprint 2'de arayüz, sistemin uçtan uca çalıştığını doğrulamak amacıyla işlevsel düzeyde geliştirilmiştir. 
+Tasarım ve kullanıcı deneyimi iyileştirmeleri Sprint 3 kapsamında planlanmıştır.
 
 ### Güvenlik Yaklaşımı
 
@@ -225,24 +202,46 @@ Geliştirme ve test sürecinde Türkçe kolon adları içeren bir satış veri s
 kullanılmıştır (Tarih, Ürün Kategorisi, Ürün Adı, Birim Fiyat, Satış Miktarı,
 Satış Tutarı, Satış Bölgesi).
 
-## Daily Scrum
-[BURAYA: Sprint 2 daily scrum notları / ekran görüntüleri]
+## Daily Scrum 
+Ekip içi iletişim; Notion üzerinde yürütülen görev kartları, Google Meet aracılığıyla gerçekleştirilen toplantılar ve WhatsApp görüşmeleri ile sağlanmıştır.
+
+### Kullanılan Araçlar 
+- [Notion](https://app.notion.com/p/41311c5edb9446e5ab44098fb74f39dd?v=3bd3e3d92a8a4d4dbc1d1263cbfecb69&source=copy_link) (görev takibi, proje veritabanı, board yönetimi)
+- WhatsApp
+- Google Meet
+
 
 ## Sprint 2 Board Durumu
-[BURAYA: Notion board ekran görüntüsü]
+<img width="1600" height="761" alt="image" src="https://github.com/user-attachments/assets/7103c766-0ed1-4443-823e-93dfd62a646c" />
 
-### Done ([BURAYA: sayı])
-- [BURAYA: tamamlanan item'lar — sorumlu ve öncelik ile]
+### Done (10)
+- Proje kapsamının yeniden değerlendirilmesi
+- Yeni ürün fikrinin ve mimarisinin oluşturulması 
+- Demo veritabanı ve veri seti hazırlığı 
+- Veritabanı bağlantı ve şema okuma modülü 
+- SQL üretim modülü (LLM-1)
+- Sonuç yorumlama ve grafik önerisi modülü (LLM-2)
+- Güvenlik katmanı ve rol tabanlı yetkilendirme
+- Arayüz geliştirme (işlevsel düzey)
+- Sprint 2 kapanış toplantısı
+- Github repository düzenleme
 
-### In Progress ([BURAYA: sayı])
-- [BURAYA: devam eden item'lar]
+### In Progress (3)
+- README'nin yeni projeye göre güncellenmesi 
+- Yeni ürünün logo tasarımı
+- Yeni ürüne isim bulunması
 
-### Planned ([BURAYA: sayı])
-- [BURAYA: planlanan item'lar]
+### Planned (3)
+- Sprint 3 için hazırlık toplantısı yapılacak.
+- Backend sistem çalışmaları
+- Kullanıcı deneyimi iyileştirme
 
 ## Ürün Durumu
-[BURAYA: Çalışan uygulamanın ekran görüntüleri — bağlantı ekranı, bir soruya
-verilen cevap (SQL + tablo + grafik + yorum), onay ekranı]
+Sprint 2 sürecinde SQL AI Analyst'in uçtan uca çalışan sürümü geliştirilmiştir. Uygulama; kullanıcının kendi SQL Server veritabanına bağlanmasını, rolünü (Analist / Yönetici) seçmesini ve veritabanına Türkçe soru sormasını sağlar. Her cevapta üretilen SQL sorgusu, sonuç tablosu, otomatik seçilen grafik ve sonucun Türkçe yorumu tek ekranda gösterilir. Yazma işlemlerinde sorgu çalıştırılmadan önce açıklaması ve uyarısıyla birlikte kullanıcı onayına sunulur. Böylece soru sormaktan onaylı sonuca uzanan akış tek ekranda takip edilebilmektedir.
+
+<img width="1600" height="761" alt="image" src="https://github.com/user-attachments/assets/1817a6ca-d7ac-4bc6-a47a-29827a4fe0e9" />
+
+Ürüne ait diğer arayüz ekranları ve tasarım görsellerine [bu Canva bağlantısından](https://canva.link/0zsy7vjj6uxodpf) ulaşabilirsiniz.
 
 ## Sprint Review
 - Proje kapsamı yeniden değerlendirilmiş ve kalan süreye uygun, çalışır bir ürün
@@ -252,10 +251,10 @@ verilen cevap (SQL + tablo + grafik + yorum), onay ekranı]
 - Rol tabanlı yetkilendirme ve yazma işlemleri için onay mekanizması kurulmuştur.
 - Arayüz geliştirilmiş; üretilen SQL, sonuç tablosu, grafik ve yorum tek ekranda
   gösterilir hale getirilmiştir.
-- [BURAYA: eklemek istediğiniz diğer maddeler]
+
 
 ### Sprint Review Katılımcıları
-- [BURAYA: katılımcılar]
+- Helin, Ilım Naz.
 
 ## Sprint Retrospective
 - Kapsamın erken gözden geçirilmesi ve gerçekçi bir hedefe yönelinmesi, ekibin
@@ -264,4 +263,4 @@ verilen cevap (SQL + tablo + grafik + yorum), onay ekranı]
   hem geliştirme hem hata ayıklama süresini belirgin şekilde kısaltmıştır.
 - Güvenliğin yalnızca model talimatlarına bırakılmaması, kod tarafında bağımsız
   bir doğrulama katmanı kurulması gerektiği görülmüştür.
-- [BURAYA: Sprint 3 için alınan kararlar]
+- Sprint 2 kapanış toplantısı yapılarak sprint tamamlanmıştır.
