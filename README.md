@@ -11,7 +11,8 @@
 | **Servet ACAR** | *Developer* | <a href="https://www.linkedin.com/in/servetacar/" target="_blank"><img src="https://img.icons8.com/color/1200/linkedin.jpg" alt="LinkedIn" height="30"></a> |
 
 # ÜRÜN BİLGİLERİ
-<img width="1536" height="1024" alt="ChatGPT Image Jul 17, 2026, 09_52_33 PM" src="https://github.com/user-attachments/assets/f1d2bb8d-caa7-4e9e-ad45-90035231f613" />
+
+<img width="1600" height="1131" alt="logo" src="https://github.com/user-attachments/assets/f4f90ceb-a9df-4e53-85b2-d93e192b93c6" />
 
 
 ## Ürün İsmi
@@ -116,3 +117,153 @@ Sprint 1 sürecinde JotMail'in ana ekranına ait arayüz mock'u hazırlanmışt�
 - Sprint 2 planlaması için ayrı bir toplantı yapılması kararlaştırılmıştır.
 - Sprint 2 sürecinde ürünü daha iyi yansıtacak bir logo tasarımı için detaylı çalışmalar yapılmasına karar verilmiştir.
 - Sprint 1 kapanış toplantısı yapılarak tamamlanan işler gözden geçirilmiş, tamamlanamayan maddelerin (STT model denemeleri ve hafıza modülü kurulumu) ikinci sprinte aktarılmasına karar verilmiştir.
+
+
+# SPRINT 2
+
+- **Sprint Tarih Aralığı:** 6 Temmuz – 19 Temmuz
+- [BURAYA: Sprint 2 görselleri linki]
+
+## Proje Kapsamının Yeniden Değerlendirilmesi
+
+Sprint 2'nin başında proje kapsamı yeniden değerlendirilmiştir. İlk sprintte
+tasarlanan JotMail (toplantı asistanı) projesi; STT, konuşmacı ayrımı, agent
+orkestrasyonu ve çoklu dış servis entegrasyonu (Notion, Gmail) içerdiğinden,
+kalan sürede sağlıklı bir şekilde tamamlanamayacağı görülmüştür.
+
+Bu nedenle ekip, aynı doğal dil işleme yetkinliklerini kullanan ancak kapsamı
+kalan süreye uygun, çalışır bir ürün ortaya koyabileceğimiz **SQL AI Analyst**
+projesine geçiş yapmıştır. Yeni proje; agent mimarisi, ses ve görüntü işleme
+içermeyen, sıralı LLM çağrılarından oluşan doğrusal bir pipeline üzerine
+kurulmuştur.
+
+Kapsam değişikliği kararı sonrasında ürün fikri, mimari ve backlog yeniden
+oluşturulmuş ve geliştirmeye aynı sprint içinde başlanmıştır.
+
+## Sprint içi puan değerlendirmesi
+
+**Sprint içi puan değerlendirmesi:** [BURAYA: hedef puan] puan olarak belirlenmiştir.
+
+Puanlama sistemi Sprint 1 ile aynıdır (High: 3, Medium: 2, Low: 1).
+
+**Sprint 2 tamamlanma puanı: [BURAYA: X] / [BURAYA: Y]**
+
+[BURAYA: Kısa açıklama — hedefe ulaşıldıysa belirtin, ulaşılmadıysa kalan
+item'ların Sprint 3'e taşındığını yazın]
+
+## Geliştirilen Yapı
+
+Sprint 2 sonunda uçtan uca çalışan bir uygulama ortaya çıkarılmıştır.
+
+### Teknoloji Yığını
+| Katman | Teknoloji |
+|---|---|
+| Web çatısı | Flask 3.0.3 |
+| LLM | OpenAI gpt-4o-mini (JSON mode) |
+| Veritabanı | Microsoft SQL Server (pyodbc) |
+| Görselleştirme | matplotlib |
+| Arayüz | HTML / CSS / Vanilla JavaScript |
+| Veri işleme | pandas |
+
+### Modüller
+
+**`app.py` — Flask uygulaması ve API katmanı**
+Uygulamanın giriş noktası ve tüm modülleri birbirine bağlayan katman.
+Uç noktalar:
+- `POST /api/connect` — veritabanı bağlantısı kurar, şemayı okur
+- `POST /api/disconnect` — bağlantıyı kapatır
+- `GET /api/status` — bağlantı durumunu döner
+- `POST /api/ask` — doğal dil sorusunu işler, SQL üretir, çalıştırır, yorumlar
+- `POST /api/execute` — kullanıcı onayından sonra yazma sorgusunu çalıştırır
+
+**`llm.py` — LLM pipeline**
+Sıralı ve sabit üç LLM çağrısı içerir. Bu bir agent değildir; LLM hiçbir zaman
+kendi kendine ne zaman çalışacağına karar vermez, akış kod tarafından belirlenir.
+- `generate_sql()` — Türkçe soru + veritabanı şeması + kullanıcı rolü → T-SQL
+  sorgusu. JSON çıktı: `sql`, `query_type`, `aciklama`, `uyari`
+- `fix_sql()` — sorgu hata verirse tek seferlik düzeltme denemesi (döngü değil)
+- `interpret_results()` — sorgu sonucu → Türkçe yorum + grafik önerisi.
+  JSON çıktı: `yorum`, `chart_type`, `x_column`, `y_column`, `title`
+
+**`db.py` — Veritabanı katmanı ve güvenlik**
+- SQL Server bağlantı yönetimi (pyodbc)
+- `INFORMATION_SCHEMA.COLUMNS` üzerinden otomatik şema okuma
+- `get_schema_text()` — şemayı LLM promptuna gömülecek okunabilir metne çevirir
+- `classify_query()` — SQL'in gerçek türünü (select/write) regex ile tespit eder
+- `run_select()` — yalnızca SELECT çalıştırır, satır sayısını sınırlar (max 500)
+- `run_write()` — yazma sorguları için, hata durumunda rollback yapar
+
+**`chart.py` — Görselleştirme**
+LLM'in önerdiği grafik türüne göre (bar / line / pie) matplotlib ile grafik
+üretir ve base64 PNG olarak döner. Veri grafiğe uygun değilse grafik üretmez.
+
+**Arayüz (`templates/`, `static/`)**
+Sohbet akışı şeklinde tasarlanmış tek sayfalık arayüz. Bağlantı paneli, rol
+seçimi, soru kutusu; her cevapta üretilen SQL, sonuç tablosu, grafik ve yorum
+gösterilir. Yazma işlemlerinde onay bileşeni devreye girer.
+
+### Güvenlik Yaklaşımı
+
+Ürünün ayırt edici yanı, SQL bilmeyen bir kullanıcının üretilen sorgunun
+tehlikeli olup olmadığını değerlendiremeyeceği gerçeğinden yola çıkan çok
+katmanlı güvenlik denetimidir:
+
+1. **Rol tabanlı yetkilendirme:** Analist rolü yalnızca SELECT çalıştırabilir;
+   yazma işlemleri yalnızca Yönetici rolüne açıktır.
+2. **Kod tarafı doğrulama:** LLM'in beyan ettiği sorgu türüne güvenilmez;
+   sorgunun gerçek türü `classify_query()` ile bağımsız olarak tespit edilir ve
+   uyuşmazlık durumunda kod tarafındaki sonuç esas alınır.
+3. **Fonksiyon seviyesinde koruma:** `run_select()` SELECT dışındaki sorguları,
+   `run_write()` ise okuma sorgularını reddeder.
+4. **Kullanıcı onayı (human-in-the-loop):** Yazma sorguları çalıştırılmadan önce
+   SQL, açıklaması ve uyarısıyla birlikte kullanıcıya sunulur; yalnızca onay
+   sonrasında ayrı bir uç noktada çalıştırılır.
+5. **Prompt seviyesinde kısıt:** WHERE koşulu olmayan DELETE/UPDATE üretilmemesi,
+   şemada olmayan tablo/kolon uydurulmaması ve SELECT sorgularına TOP sınırı
+   eklenmesi model talimatlarına dahil edilmiştir.
+
+### Demo Veri Seti
+Geliştirme ve test sürecinde Türkçe kolon adları içeren bir satış veri seti
+kullanılmıştır (Tarih, Ürün Kategorisi, Ürün Adı, Birim Fiyat, Satış Miktarı,
+Satış Tutarı, Satış Bölgesi).
+
+## Daily Scrum
+[BURAYA: Sprint 2 daily scrum notları / ekran görüntüleri]
+
+## Sprint 2 Board Durumu
+[BURAYA: Notion board ekran görüntüsü]
+
+### Done ([BURAYA: sayı])
+- [BURAYA: tamamlanan item'lar — sorumlu ve öncelik ile]
+
+### In Progress ([BURAYA: sayı])
+- [BURAYA: devam eden item'lar]
+
+### Planned ([BURAYA: sayı])
+- [BURAYA: planlanan item'lar]
+
+## Ürün Durumu
+[BURAYA: Çalışan uygulamanın ekran görüntüleri — bağlantı ekranı, bir soruya
+verilen cevap (SQL + tablo + grafik + yorum), onay ekranı]
+
+## Sprint Review
+- Proje kapsamı yeniden değerlendirilmiş ve kalan süreye uygun, çalışır bir ürün
+  ortaya koyabilmek adına SQL AI Analyst projesine geçiş yapılmıştır.
+- Doğal dil sorusundan SQL üretimi, güvenlik denetimi, sorgu çalıştırma, sonuç
+  yorumlama ve grafik üretimini kapsayan uçtan uca akış tamamlanmıştır.
+- Rol tabanlı yetkilendirme ve yazma işlemleri için onay mekanizması kurulmuştur.
+- Arayüz geliştirilmiş; üretilen SQL, sonuç tablosu, grafik ve yorum tek ekranda
+  gösterilir hale getirilmiştir.
+- [BURAYA: eklemek istediğiniz diğer maddeler]
+
+### Sprint Review Katılımcıları
+- [BURAYA: katılımcılar]
+
+## Sprint Retrospective
+- Kapsamın erken gözden geçirilmesi ve gerçekçi bir hedefe yönelinmesi, ekibin
+  kalan sürede çalışır bir ürün ortaya koyabilmesini sağlamıştır.
+- Agent mimarisi yerine sıralı ve öngörülebilir bir LLM pipeline'ı tercih edilmesi,
+  hem geliştirme hem hata ayıklama süresini belirgin şekilde kısaltmıştır.
+- Güvenliğin yalnızca model talimatlarına bırakılmaması, kod tarafında bağımsız
+  bir doğrulama katmanı kurulması gerektiği görülmüştür.
+- [BURAYA: Sprint 3 için alınan kararlar]
