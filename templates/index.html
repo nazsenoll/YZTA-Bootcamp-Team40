@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQL AI Analyst</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-mark">◆</span>
+      <div>
+        <div class="brand-title">SQL AI Analyst</div>
+        <div class="brand-sub">soru → sorgu → grafik → yorum</div>
+      </div>
+    </div>
+
+    <div class="panel" id="connection-panel">
+      <div class="panel-label">01 · Veritabanı Bağlantısı</div>
+
+      <div id="disconnected-view">
+        <label>Sunucu (server)</label>
+        <input type="text" id="in-server" placeholder="ör. DESKTOP-AB12CD\\SQLEXPRESS">
+
+        <label>Veritabanı</label>
+        <input type="text" id="in-database" placeholder="ör. Eticaret">
+
+        <label>Kullanıcı adı</label>
+        <input type="text" id="in-username" placeholder="sa">
+
+        <label>Şifre</label>
+        <input type="password" id="in-password" placeholder="••••••••">
+
+        <button class="btn-primary" id="btn-connect">Bağlan</button>
+        <div class="hint-error" id="connect-error"></div>
+      </div>
+
+      <div id="connected-view" class="hidden">
+        <div class="status-row">
+          <span class="dot dot-live"></span>
+          <div>
+            <div class="status-server" id="status-server"></div>
+            <div class="status-db" id="status-db"></div>
+          </div>
+        </div>
+        <button class="btn-ghost" id="btn-disconnect">Bağlantıyı değiştir</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-label">02 · Rol</div>
+      <div class="role-toggle">
+        <button class="role-btn active" data-role="analist">
+          <span class="role-name">Analist</span>
+          <span class="role-desc">sadece SELECT</span>
+        </button>
+        <button class="role-btn" data-role="yonetici">
+          <span class="role-name">Yönetici</span>
+          <span class="role-desc">SELECT + onaylı DELETE/UPDATE</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="pipeline-note">
+      <div class="pipeline-step">Soru</div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step">SQL</div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step">Sonuç</div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step">Yorum</div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="thread" id="thread">
+      <div class="empty-state" id="empty-state">
+        <div class="empty-mark">◆</div>
+        <p>Bağlantı kurulduktan sonra veritabanına Türkçe soru sorabilirsin.</p>
+        <p class="empty-example">"geçen ay en çok satan ürün hangisi?"</p>
+      </div>
+    </div>
+
+    <form class="composer" id="composer">
+      <input type="text" id="in-question" placeholder="Veritabanına bir şey sor..." autocomplete="off" disabled>
+      <button type="submit" id="btn-ask" disabled>Sor</button>
+    </form>
+  </main>
+
+</div>
+
+<template id="tpl-message-user">
+  <div class="msg msg-user">
+    <div class="msg-bubble"></div>
+  </div>
+</template>
+
+<template id="tpl-message-answer">
+  <div class="msg msg-answer">
+    <div class="sql-block">
+      <div class="sql-block-label">SQL</div>
+      <pre class="sql-code"></pre>
+    </div>
+    <div class="result-table-wrap"></div>
+    <div class="chart-wrap"></div>
+    <div class="yorum-block"></div>
+  </div>
+</template>
+
+<template id="tpl-message-confirm">
+  <div class="msg msg-confirm">
+    <div class="confirm-badge">Onay gerekiyor</div>
+    <div class="sql-block">
+      <div class="sql-block-label">SQL</div>
+      <pre class="sql-code"></pre>
+    </div>
+    <div class="confirm-aciklama"></div>
+    <div class="confirm-uyari"></div>
+    <div class="confirm-actions">
+      <button class="btn-danger btn-approve">Çalıştır</button>
+      <button class="btn-ghost btn-reject">Vazgeç</button>
+    </div>
+  </div>
+</template>
+
+<template id="tpl-message-error">
+  <div class="msg msg-error"></div>
+</template>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
