@@ -13,37 +13,40 @@
 # ÜRÜN BİLGİLERİ
 
 ## Ürün İsmi
-**JotMail** - Toplantı Asistanı Agent
+**SQL AI Analyst** — Doğal dil ile veritabanı sorgulama asistanı
 
 ## Ürün Açıklaması
-Toplantı kaydını (ses) ya da transkriptini analiz ederek özet, kararlar ve
-kişilere atanmış task'lar çıkaran; task'ları Notion'a yazan ve takip mail
-taslakları üreten yapay zeka destekli toplantı asistanı.
+Veritabanına bağlanıp Türkçe soru sorarak, SQL bilmeden veri analizi yapmayı
+sağlayan yapay zeka destekli analiz asistanı. Kullanıcının sorusunu SQL'e
+çevirir, güvenlik denetiminden geçirir, çalıştırır ve sonucu tablo, grafik ve
+Türkçe yorum olarak sunar.
 
 ## Ürün Özellikleri
-- Ses kaydını metne çevirme (STT)
-- Transkriptten otomatik özet çıkarma
-- Cümle sınıflandırma ile karar ve aksiyon (task) tespiti
-- Task'ları kişilere eşleştirme
-- Notion'a otomatik task yazma (agent araç kullanımı)
-- Kişi bazlı takip mail taslağı üretimi
-- Katılımcı ve geçmiş toplantı hafızası
-- Onay ekranı (kullanıcı task/mail'leri onaylar)
-
-## Sistem Mimarisi
-| | |
-| :---: | :---: |
-| <img src="https://github.com/user-attachments/assets/35fabf69-4f10-4624-9c27-f1a0c92f8194" width="600" height="400" style="object-fit: cover;" /> | <img src="https://github.com/user-attachments/assets/cd22e25e-6ef2-4179-872a-692dc6e28daf" width="600" height="400" style="object-fit: cover;" /> |
-
+- Kendi SQL Server veritabanına bağlanma ve şemayı otomatik okuma
+- Türkçe doğal dil sorusunu T-SQL sorgusuna çevirme
+- Rol tabanlı yetkilendirme (Analist: yalnızca SELECT / Yönetici: onaylı yazma işlemleri)
+- Kod tarafında sorgu türü doğrulaması ile güvenlik denetimi
+- Hatalı sorgular için tek seferlik otomatik düzeltme
+- Sonuçları Türkçe yorumlama ve içgörü çıkarma
+- Sonuca uygun grafik türünü otomatik seçme ve görselleştirme
+- Yazma işlemleri için kullanıcı onay ekranı (human-in-the-loop)
+- Üretilen SQL'in kullanıcıya şeffaf şekilde gösterilmesi
 
 ## Hedef Kitle
-- Uzaktan/hibrit çalışan ekipler
-- Ajanslar ve küçük şirketler
-- Proje yöneticileri
-- Öğrenci kulüpleri / topluluklar
+- SQL bilmeyen ancak veriye ihtiyaç duyan pazarlama, satış ve operasyon çalışanları
+- Veri ekibi olmayan veya veri ekibi yoğun olan şirketler
+- Küçük ve orta ölçekli işletmelerde raporlama ihtiyacı olan yöneticiler
+
+## Sistem Mimarisi
+
+
+Akış: Kullanıcı sorusu → Şema okuma → LLM-1 (SQL üretimi) → Güvenlik denetimi
+(kod tarafı + rol kontrolü) → Sorgu çalıştırma → LLM-3 (yorumlama + grafik
+önerisi) → Grafik üretimi → Kullanıcıya sunum
 
 ## Product Backlog
--  Product Backlog, [Notion](https://app.notion.com/p/41311c5edb9446e5ab44098fb74f39dd?v=3bd3e3d92a8a4d4dbc1d1263cbfecb69&source=copy_link) board'u üzerinde önceliklendirilmiş görev kartları halinde yönetilmektedir.
+- Product Backlog, [Notion](NOTION_LINKI) board'u üzerinde önceliklendirilmiş
+  görev kartları halinde yönetilmektedir.
 
 # SPRINT 1
 - **Sprint Tarih Aralığı:** 28 Haziran – 5 Temmuz
