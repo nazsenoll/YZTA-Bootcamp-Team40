@@ -13,7 +13,7 @@
 # ÜRÜN BİLGİLERİ
 
 ## Ürün İsmi
-**SQL AI Analyst** — Doğal dil ile veritabanı sorgulama asistanı
+**AskQL - SQL AI Analyst** — Doğal dil ile veritabanı sorgulama asistanı
 
 ## Ürün Açıklaması
 Veritabanına bağlanıp Türkçe soru sorarak, SQL bilmeden veri analizi yapmayı
