@@ -11,6 +11,8 @@
 | **Servet ACAR** | *Developer* | <a href="https://www.linkedin.com/in/servetacar/" target="_blank"><img src="https://img.icons8.com/color/1200/linkedin.jpg" alt="LinkedIn" height="30"></a> |
 
 # ÜRÜN BİLGİLERİ
+<img width="1536" height="1024" alt="ChatGPT Image Jul 17, 2026, 09_52_33 PM" src="https://github.com/user-attachments/assets/f1d2bb8d-caa7-4e9e-ad45-90035231f613" />
+
 
 ## Ürün İsmi
 **AskQL - SQL AI Analyst** — Doğal dil ile veritabanı sorgulama asistanı
@@ -26,7 +28,6 @@ Türkçe yorum olarak sunar.
 - Türkçe doğal dil sorusunu T-SQL sorgusuna çevirme
 - Rol tabanlı yetkilendirme (Analist: yalnızca SELECT / Yönetici: onaylı yazma işlemleri)
 - Kod tarafında sorgu türü doğrulaması ile güvenlik denetimi
-- Hatalı sorgular için tek seferlik otomatik düzeltme
 - Sonuçları Türkçe yorumlama ve içgörü çıkarma
 - Sonuca uygun grafik türünü otomatik seçme ve görselleştirme
 - Yazma işlemleri için kullanıcı onay ekranı (human-in-the-loop)
@@ -39,22 +40,14 @@ Türkçe yorum olarak sunar.
 
 ## Sistem Mimarisi
 
-
 Akış: Kullanıcı sorusu → Şema okuma → LLM-1 (SQL üretimi) → Güvenlik denetimi
 (kod tarafı + rol kontrolü) → Sorgu çalıştırma → LLM-3 (yorumlama + grafik
 önerisi) → Grafik üretimi → Kullanıcıya sunum
 
 ## Product Backlog
-- Product Backlog, [Notion](NOTION_LINKI) board'u üzerinde önceliklendirilmiş
-  görev kartları halinde yönetilmektedir.
-
-# SPRINT 1
-- **Sprint Tarih Aralığı:** 28 Haziran – 5 Temmuz
-- [Sprint 1 süreci](https://canva.link/0zsy7vjj6uxodpf) ile ilgili tüm görseller buradadır.
-
-## Sprint içi puan değerlendirmesi 
-**Sprint içi puan değerlendirmesi:** 22 puan olarak belirlenmiştir.
-
+- Product Backlog, [Notion](https://app.notion.com/p/41311c5edb9446e5ab44098fb74f39dd?v=3bd3e3d92a8a4d4dbc1d1263cbfecb69&source=copy_link) board'u üzerinde önceliklendirilmiş görev kartları halinde yönetilmektedir.
+- [Bootcamp süreci](https://canva.link/0zsy7vjj6uxodpf) ile ilgili tüm görseller buradadır.
+  
 ### Puanlama Sistemi
 
 Backlog item'ları önceliklerine göre puanlanmıştır. Öncelik, bir görevin
@@ -66,10 +59,12 @@ projenin ilerlemesi için ne kadar kritik olduğuna göre belirlenmiştir:
 | Medium (Orta)  | 2 |
 | Low (Düşük)    | 1 |
 
-Her sprintte tamamlanan item'ların puanları toplanarak sprintin tamamlanma
-puanı hesaplanmıştır.
+# SPRINT 1
+- **Sprint Tarih Aralığı:** 28 Haziran – 5 Temmuz
+- [Sprint 1 süreci](https://canva.link/0zsy7vjj6uxodpf) ile ilgili tüm görseller buradadır.
 
-**Sprint 1 tamamlanma puanı: 17 / 22**
+## Sprint içi puan değerlendirmesi 
+**Sprint içi puan değerlendirmesi:** 22 puan olarak belirlenmiş olup, **Sprint 1 tamamlanma puanı: 17 / 22**
 
 Sprint için hedeflenen 22 puanın 17'si tamamlanmıştır. Kalan item'lar
 ikinci sprintin backlog'una taşınmıştır.
