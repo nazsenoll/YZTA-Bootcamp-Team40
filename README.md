@@ -6,9 +6,7 @@
 | :--- | :--- | :---: |
 | **Helin Melike ÇAL** | *Product Owner* | <a href="https://www.linkedin.com/in/helin-melike-%C3%A7al-592680222/" target="_blank"><img src="https://img.icons8.com/color/1200/linkedin.jpg" alt="LinkedIn" height="30"></a> |
 | **Ilım Naz ŞENOL** | *Scrum Master* | <a href="https://www.linkedin.com/in/%C4%B1l%C4%B1mnaz%C5%9Fenol" target="_blank"><img src="https://img.icons8.com/color/1200/linkedin.jpg" alt="LinkedIn" height="30"></a> |
-| **Ahmet Bera ONAR** | *Developer* | <a href="https://www.linkedin.com/in/ahmetberaonar/" target="_blank"><img src="https://img.icons8.com/color/1200/linkedin.jpg" alt="LinkedIn" height="30"></a> |
 | **Emre GERGİN** | *Developer* | <a href="https://www.linkedin.com/in/emregergin/" target="_blank"><img src="https://img.icons8.com/color/1200/linkedin.jpg" alt="LinkedIn" height="30"></a> |
-| **Servet ACAR** | *Developer* | <a href="https://www.linkedin.com/in/servetacar/" target="_blank"><img src="https://img.icons8.com/color/1200/linkedin.jpg" alt="LinkedIn" height="30"></a> |
 
 # ÜRÜN BİLGİLERİ
 <img width="1123" height="794" alt="Adsız tasarım (1)" src="https://github.com/user-attachments/assets/1792b645-8420-442f-abd0-db6dede4a5a1" />
