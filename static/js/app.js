@@ -4,11 +4,17 @@ const state = {
 };
 
 const els = {
-  loginGate: document.getElementById("login-gate"),
+  authGate: document.getElementById("auth-gate"),
   dbGate: document.getElementById("db-gate"),
   appRoot: document.getElementById("app"),
+  linkToRegister: document.getElementById("link-to-register"),
+  linkToLogin: document.getElementById("link-to-login"),
+  loginForm: document.getElementById("login-form"),
+  registerForm: document.getElementById("register-form"),
   btnLogin: document.getElementById("btn-login"),
   loginError: document.getElementById("login-error"),
+  btnRegister: document.getElementById("btn-register"),
+  registerError: document.getElementById("register-error"),
   btnConnect: document.getElementById("btn-connect"),
   btnDisconnect: document.getElementById("btn-disconnect"),
   btnLogout: document.getElementById("btn-logout"),
@@ -23,12 +29,39 @@ const els = {
   btnAsk: document.getElementById("btn-ask"),
 };
 
+// ---------- Giris / Kayit gecisi (link tabanli) ----------
+
+els.linkToRegister.addEventListener("click", (e) => {
+  e.preventDefault();
+  switchAuthMode("register");
+});
+els.linkToLogin.addEventListener("click", (e) => {
+  e.preventDefault();
+  switchAuthMode("login");
+});
+
+function switchAuthMode(mode) {
+  const isLogin = mode === "login";
+  els.loginForm.classList.toggle("hidden", !isLogin);
+  els.registerForm.classList.toggle("hidden", isLogin);
+  els.loginError.textContent = "";
+  els.registerError.textContent = "";
+}
+
+// ---------- Sifre goster/gizle ----------
+
+document.getElementById("toggle-login-pw").addEventListener("click", () => {
+  const pw = document.getElementById("in-app-password");
+  pw.type = pw.type === "password" ? "text" : "password";
+});
+
 // ---------- Giris (email + sifre) ----------
 
 els.btnLogin.addEventListener("click", async () => {
   const payload = {
     email: document.getElementById("in-email").value,
     password: document.getElementById("in-app-password").value,
+    remember: document.getElementById("remember-me").checked,
   };
 
   els.loginError.textContent = "";
@@ -57,16 +90,58 @@ els.btnLogin.addEventListener("click", async () => {
   }
 });
 
+// ---------- Kayit (email + sifre + sifre tekrar) ----------
+
+els.btnRegister.addEventListener("click", async () => {
+  const payload = {
+    email: document.getElementById("reg-email").value,
+    password: document.getElementById("reg-password").value,
+    password_confirm: document.getElementById("reg-password-confirm").value,
+  };
+
+  els.registerError.textContent = "";
+  els.btnRegister.disabled = true;
+  els.btnRegister.textContent = "Kayıt oluşturuluyor...";
+
+  try {
+    const res = await fetch("/api/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+
+    if (!data.ok) {
+      els.registerError.textContent = data.error || "Kayıt oluşturulamadı.";
+      return;
+    }
+
+    setAuthenticated();
+  } catch (e) {
+    els.registerError.textContent = "Sunucuya ulaşılamadı.";
+  } finally {
+    els.btnRegister.disabled = false;
+    els.btnRegister.textContent = "Kayıt Ol";
+  }
+});
+
 els.btnLogout.addEventListener("click", async () => {
+  await fetch("/api/logout", { method: "POST" });
+  setLoggedOut();
+});
+
+document.getElementById("btn-switch-account").addEventListener("click", async () => {
   await fetch("/api/logout", { method: "POST" });
   setLoggedOut();
 });
 
 function setAuthenticated() {
   state.authenticated = true;
-  els.loginGate.classList.add("hidden");
+  els.authGate.classList.add("hidden");
   els.dbGate.classList.remove("hidden");
   document.getElementById("in-app-password").value = "";
+  document.getElementById("reg-password").value = "";
+  document.getElementById("reg-password-confirm").value = "";
 }
 
 function setLoggedOut() {
@@ -74,7 +149,8 @@ function setLoggedOut() {
   state.connected = false;
   els.appRoot.classList.add("hidden");
   els.dbGate.classList.add("hidden");
-  els.loginGate.classList.remove("hidden");
+  els.authGate.classList.remove("hidden");
+  switchAuthMode("login");
   document.getElementById("in-app-password").value = "";
   document.getElementById("in-password").value = "";
 }
