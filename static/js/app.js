@@ -1,12 +1,17 @@
 const state = {
+  authenticated: false,
   connected: false,
 };
 
 const els = {
-  gate: document.getElementById("gate"),
+  loginGate: document.getElementById("login-gate"),
+  dbGate: document.getElementById("db-gate"),
   appRoot: document.getElementById("app"),
+  btnLogin: document.getElementById("btn-login"),
+  loginError: document.getElementById("login-error"),
   btnConnect: document.getElementById("btn-connect"),
   btnDisconnect: document.getElementById("btn-disconnect"),
+  btnLogout: document.getElementById("btn-logout"),
   connectError: document.getElementById("connect-error"),
   statusServer: document.getElementById("status-server"),
   statusDb: document.getElementById("status-db"),
@@ -17,6 +22,62 @@ const els = {
   inQuestion: document.getElementById("in-question"),
   btnAsk: document.getElementById("btn-ask"),
 };
+
+// ---------- Giris (email + sifre) ----------
+
+els.btnLogin.addEventListener("click", async () => {
+  const payload = {
+    email: document.getElementById("in-email").value,
+    password: document.getElementById("in-app-password").value,
+  };
+
+  els.loginError.textContent = "";
+  els.btnLogin.disabled = true;
+  els.btnLogin.textContent = "Giriş yapılıyor...";
+
+  try {
+    const res = await fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+
+    if (!data.ok) {
+      els.loginError.textContent = data.error || "Giriş yapılamadı.";
+      return;
+    }
+
+    setAuthenticated();
+  } catch (e) {
+    els.loginError.textContent = "Sunucuya ulaşılamadı.";
+  } finally {
+    els.btnLogin.disabled = false;
+    els.btnLogin.textContent = "Giriş Yap";
+  }
+});
+
+els.btnLogout.addEventListener("click", async () => {
+  await fetch("/api/logout", { method: "POST" });
+  setLoggedOut();
+});
+
+function setAuthenticated() {
+  state.authenticated = true;
+  els.loginGate.classList.add("hidden");
+  els.dbGate.classList.remove("hidden");
+  document.getElementById("in-app-password").value = "";
+}
+
+function setLoggedOut() {
+  state.authenticated = false;
+  state.connected = false;
+  els.appRoot.classList.add("hidden");
+  els.dbGate.classList.add("hidden");
+  els.loginGate.classList.remove("hidden");
+  document.getElementById("in-app-password").value = "";
+  document.getElementById("in-password").value = "";
+}
 
 // ---------- Baglanti ----------
 
@@ -61,7 +122,7 @@ els.btnDisconnect.addEventListener("click", async () => {
 
 function setConnected(info) {
   state.connected = true;
-  els.gate.classList.add("hidden");
+  els.dbGate.classList.add("hidden");
   els.appRoot.classList.remove("hidden");
   els.statusServer.textContent = info.server;
   els.statusDb.textContent = info.database + " · " + info.table_count + " tablo";
@@ -83,7 +144,7 @@ function renderRoleBadge(role) {
 function setDisconnected() {
   state.connected = false;
   els.appRoot.classList.add("hidden");
-  els.gate.classList.remove("hidden");
+  els.dbGate.classList.remove("hidden");
   els.inQuestion.disabled = true;
   els.btnAsk.disabled = true;
   document.getElementById("in-password").value = "";
@@ -272,18 +333,25 @@ function scrollToBottom() {
   els.thread.scrollTop = els.thread.scrollHeight;
 }
 
-// ---------- Sayfa yuklenince baglanti durumunu kontrol et ----------
+// ---------- Sayfa yuklenince once giris, sonra baglanti durumunu kontrol et ----------
 
 (async function checkStatus() {
   try {
-    const res = await fetch("/api/status");
-    const data = await res.json();
-    if (data.connected) {
+    const authRes = await fetch("/api/auth_status");
+    const authData = await authRes.json();
+    if (!authData.authenticated) {
+      return; // varsayilan gorunum zaten login-gate
+    }
+    setAuthenticated();
+
+    const dbRes = await fetch("/api/status");
+    const dbData = await dbRes.json();
+    if (dbData.connected) {
       setConnected({
-        server: data.info.server,
-        database: data.info.database,
+        server: dbData.info.server,
+        database: dbData.info.database,
         table_count: "?",
-        role: data.info.role,
+        role: dbData.info.role,
       });
     }
   } catch (e) {
