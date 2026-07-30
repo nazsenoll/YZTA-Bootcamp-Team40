@@ -13,6 +13,7 @@ _state = {
     "server": None,
     "database": None,
     "schema": None,
+    "role": None,
 }
 
 ODBC_DRIVER = os.environ.get("ODBC_DRIVER", "ODBC Driver 17 for SQL Server")
@@ -44,8 +45,14 @@ def connect(server: str, database: str, username: str, password: str) -> dict:
     _state["server"] = server
     _state["database"] = database
     _state["schema"] = _read_schema(conn)
+    _state["role"] = _determine_role(conn)
 
-    return {"server": server, "database": database, "table_count": len(_state["schema"])}
+    return {
+        "server": server,
+        "database": database,
+        "table_count": len(_state["schema"]),
+        "role": _state["role"],
+    }
 
 
 def disconnect():
@@ -58,6 +65,7 @@ def disconnect():
     _state["server"] = None
     _state["database"] = None
     _state["schema"] = None
+    _state["role"] = None
 
 
 def is_connected() -> bool:
@@ -65,7 +73,20 @@ def is_connected() -> bool:
 
 
 def get_connection_info() -> dict:
-    return {"server": _state["server"], "database": _state["database"]}
+    return {"server": _state["server"], "database": _state["database"], "role": _state["role"]}
+
+
+def _determine_role(conn) -> str:
+    """Baglanan SQL girisinin GERCEK veritabani izinlerine gore rolu belirler.
+    Rol artik arayuzden secilen bir sey degil; hangi sifreyle baglanildiysa
+    o girisin db_owner/db_datawriter uyeligine gore otomatik atanir."""
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT IS_MEMBER('db_owner'), IS_MEMBER('db_datawriter')")
+        is_owner, is_writer = cursor.fetchone()
+        return "yonetici" if (is_owner == 1 or is_writer == 1) else "analist"
+    finally:
+        cursor.close()
 
 
 def get_schema() -> dict:
