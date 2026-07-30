@@ -36,6 +36,9 @@ def api_connect():
     except db.DBError as e:
         return jsonify({"ok": False, "error": str(e)}), 400
 
+    # Rol artik beyana degil, veritabaninin bu girise verdigi gercek izne
+    # gore belirlenir; sunucu tarafinda session'da tutulur, istemci degistiremez.
+    session["role"] = info["role"]
     # Yeni baglantida onceki konusma gecmisi artik alakasiz -> temizle.
     session.pop("history", None)
 
@@ -81,12 +84,12 @@ def api_ask():
 
     data = request.get_json(force=True)
     question = (data.get("question") or "").strip()
-    role = data.get("role") or "analist"
+    # Rol istekten degil, baglanti aninda belirlenip session'a yazilan
+    # degerden okunur -- istemci rolunu degistiremez.
+    role = session.get("role", "analist")
 
     if not question:
         return jsonify({"ok": False, "error": "Bir soru/komut yazmalisin."}), 400
-    if role not in ("analist", "yonetici"):
-        return jsonify({"ok": False, "error": "Gecersiz rol."}), 400
 
     schema_text = db.get_schema_text()
     history_entries = session.get("history", [])
@@ -191,7 +194,7 @@ def api_execute():
 
     data = request.get_json(force=True)
     sql = (data.get("sql") or "").strip()
-    role = data.get("role") or "analist"
+    role = session.get("role", "analist")
     # Onay ekranindan gelen orijinal soru; self-healing'e baglam saglar (opsiyonel).
     question = (data.get("question") or "Kullanicinin onayladigi yazma islemi").strip()
 
