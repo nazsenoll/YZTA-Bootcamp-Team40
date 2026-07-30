@@ -166,37 +166,21 @@ input:focus {
   color: var(--text-dim);
 }
 
-.role-toggle {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.role-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 2px;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 10px 12px;
-  cursor: pointer;
-  color: var(--text);
-  text-align: left;
-}
-.role-btn.active {
-  border-color: var(--teal);
-  background: rgba(63,156,147,0.08);
-}
-.role-name {
-  font-weight: 600;
-  font-size: 13px;
-}
-.role-desc {
+.role-badge {
+  margin-top: 12px;
+  display: inline-block;
   font-family: var(--mono);
   font-size: 11px;
-  color: var(--text-dim);
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+.role-badge-analist {
+  background: rgba(63,156,147,0.12);
+  color: var(--teal);
+}
+.role-badge-yonetici {
+  background: rgba(217,154,78,0.15);
+  color: var(--amber);
 }
 
 .pipeline-note {
