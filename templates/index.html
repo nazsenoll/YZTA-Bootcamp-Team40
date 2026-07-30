@@ -4,17 +4,58 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SQL AI Analyst</title>
+<link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo-mark.png') }}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
 
-<div class="app">
+<div class="gate" id="gate">
+  <div class="gate-brand">
+    <div class="logo-chip logo-chip-lg"><img src="{{ url_for('static', filename='img/logo-mark.png') }}" alt="AskQL"></div>
+    <div class="gate-headline">SQL yazma,<br>sadece sor.</div>
+    <div class="gate-tagline">Türkçe soru → doğrulanmış T-SQL → grafik → yorum. Hepsi tek ekranda.</div>
+
+    <div class="gate-steps">
+      <div class="gate-steps-label">nasıl çalışır</div>
+      <div class="gate-step"><span class="gate-step-num">1</span><span>bağlan</span></div>
+      <div class="gate-step"><span class="gate-step-num">2</span><span>soru sor</span></div>
+      <div class="gate-step"><span class="gate-step-num">3</span><span>sonucu gör</span></div>
+    </div>
+  </div>
+
+  <div class="gate-form">
+    <div class="gate-form-label">01 · veritabanı bağlantısı</div>
+
+    <label for="in-server" class="gate-label">Sunucu</label>
+    <input type="text" id="in-server" class="gate-input" placeholder="DESKTOP-AB12CD\SQLEXPRESS" autocomplete="off">
+
+    <label for="in-database" class="gate-label">Veritabanı</label>
+    <input type="text" id="in-database" class="gate-input" placeholder="Eticaret" autocomplete="off">
+
+    <div class="gate-row">
+      <div>
+        <label for="in-username" class="gate-label">Kullanıcı adı</label>
+        <input type="text" id="in-username" class="gate-input" placeholder="sa" autocomplete="username">
+      </div>
+      <div>
+        <label for="in-password" class="gate-label">Şifre</label>
+        <input type="password" id="in-password" class="gate-input" placeholder="••••••••" autocomplete="current-password">
+      </div>
+    </div>
+
+    <button class="gate-submit" id="btn-connect">Bağlan →</button>
+    <div class="hint-error" id="connect-error"></div>
+    <div class="gate-note">bilgiler yalnızca bu oturumda tutulur</div>
+  </div>
+</div>
+
+<div class="app hidden" id="app">
 
   <aside class="sidebar">
     <div class="brand">
-      <span class="brand-mark">◆</span>
+      <div class="logo-chip logo-chip-sm"><img src="{{ url_for('static', filename='img/logo-mark.png') }}" alt="AskQL"></div>
       <div>
         <div class="brand-title">SQL AI Analyst</div>
         <div class="brand-sub">soru → sorgu → grafik → yorum</div>
@@ -23,35 +64,15 @@
 
     <div class="panel" id="connection-panel">
       <div class="panel-label">01 · Veritabanı Bağlantısı</div>
-
-      <div id="disconnected-view">
-        <label>Sunucu (server)</label>
-        <input type="text" id="in-server" placeholder="ör. DESKTOP-AB12CD\\SQLEXPRESS">
-
-        <label>Veritabanı</label>
-        <input type="text" id="in-database" placeholder="ör. Eticaret">
-
-        <label>Kullanıcı adı</label>
-        <input type="text" id="in-username" placeholder="sa">
-
-        <label>Şifre</label>
-        <input type="password" id="in-password" placeholder="••••••••">
-
-        <button class="btn-primary" id="btn-connect">Bağlan</button>
-        <div class="hint-error" id="connect-error"></div>
-      </div>
-
-      <div id="connected-view" class="hidden">
-        <div class="status-row">
-          <span class="dot dot-live"></span>
-          <div>
-            <div class="status-server" id="status-server"></div>
-            <div class="status-db" id="status-db"></div>
-          </div>
+      <div class="status-row">
+        <span class="dot dot-live"></span>
+        <div>
+          <div class="status-server" id="status-server"></div>
+          <div class="status-db" id="status-db"></div>
         </div>
-        <div class="role-badge" id="role-badge"></div>
-        <button class="btn-ghost" id="btn-disconnect">Bağlantıyı değiştir</button>
       </div>
+      <div class="role-badge" id="role-badge"></div>
+      <button class="btn-ghost" id="btn-disconnect">Bağlantıyı değiştir</button>
     </div>
 
     <div class="pipeline-note">
@@ -68,7 +89,7 @@
   <main class="main">
     <div class="thread" id="thread">
       <div class="empty-state" id="empty-state">
-        <div class="empty-mark">◆</div>
+        <div class="logo-chip logo-chip-md"><img src="{{ url_for('static', filename='img/logo-mark.png') }}" alt="AskQL"></div>
         <p>Bağlantı kurulduktan sonra veritabanına Türkçe soru sorabilirsin.</p>
         <p class="empty-example">"geçen ay en çok satan ürün hangisi?"</p>
       </div>
