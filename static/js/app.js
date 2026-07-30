@@ -1,5 +1,4 @@
 const state = {
-  role: "analist",
   connected: false,
 };
 
@@ -11,7 +10,7 @@ const els = {
   connectError: document.getElementById("connect-error"),
   statusServer: document.getElementById("status-server"),
   statusDb: document.getElementById("status-db"),
-  roleBtns: document.querySelectorAll(".role-btn"),
+  roleBadge: document.getElementById("role-badge"),
   thread: document.getElementById("thread"),
   emptyState: document.getElementById("empty-state"),
   composer: document.getElementById("composer"),
@@ -66,8 +65,19 @@ function setConnected(info) {
   els.connectedView.classList.remove("hidden");
   els.statusServer.textContent = info.server;
   els.statusDb.textContent = info.database + " · " + info.table_count + " tablo";
+  renderRoleBadge(info.role);
   els.inQuestion.disabled = false;
   els.btnAsk.disabled = false;
+}
+
+function renderRoleBadge(role) {
+  if (!role) {
+    els.roleBadge.textContent = "";
+    els.roleBadge.className = "role-badge";
+    return;
+  }
+  els.roleBadge.textContent = role === "yonetici" ? "Yönetici · yazma izinli" : "Analist · sadece SELECT";
+  els.roleBadge.className = "role-badge role-badge-" + role;
 }
 
 function setDisconnected() {
@@ -77,16 +87,6 @@ function setDisconnected() {
   els.inQuestion.disabled = true;
   els.btnAsk.disabled = true;
 }
-
-// ---------- Rol secimi ----------
-
-els.roleBtns.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    els.roleBtns.forEach((b) => b.classList.remove("active"));
-    btn.classList.add("active");
-    state.role = btn.dataset.role;
-  });
-});
 
 // ---------- Soru sorma ----------
 
@@ -106,7 +106,7 @@ els.composer.addEventListener("submit", async (e) => {
     const res = await fetch("/api/ask", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question, role: state.role }),
+      body: JSON.stringify({ question }),
     });
     const data = await res.json();
     thinkingMsg.remove();
@@ -207,7 +207,7 @@ function addConfirmMessage(data, question) {
       const res = await fetch("/api/execute", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sql: data.sql, role: state.role }),
+        body: JSON.stringify({ sql: data.sql }),
       });
       const result = await res.json();
       const actions = wrapper.querySelector(".confirm-actions");
@@ -278,7 +278,12 @@ function scrollToBottom() {
     const res = await fetch("/api/status");
     const data = await res.json();
     if (data.connected) {
-      setConnected({ server: data.info.server, database: data.info.database, table_count: "?" });
+      setConnected({
+        server: data.info.server,
+        database: data.info.database,
+        table_count: "?",
+        role: data.info.role,
+      });
     }
   } catch (e) {
     // sessiz gec
