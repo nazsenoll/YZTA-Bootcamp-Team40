@@ -3,8 +3,8 @@ const state = {
 };
 
 const els = {
-  disconnectedView: document.getElementById("disconnected-view"),
-  connectedView: document.getElementById("connected-view"),
+  gate: document.getElementById("gate"),
+  appRoot: document.getElementById("app"),
   btnConnect: document.getElementById("btn-connect"),
   btnDisconnect: document.getElementById("btn-disconnect"),
   connectError: document.getElementById("connect-error"),
@@ -50,7 +50,7 @@ els.btnConnect.addEventListener("click", async () => {
     els.connectError.textContent = "Sunucuya ulaşılamadı.";
   } finally {
     els.btnConnect.disabled = false;
-    els.btnConnect.textContent = "Bağlan";
+    els.btnConnect.textContent = "Bağlan →";
   }
 });
 
@@ -61,8 +61,8 @@ els.btnDisconnect.addEventListener("click", async () => {
 
 function setConnected(info) {
   state.connected = true;
-  els.disconnectedView.classList.add("hidden");
-  els.connectedView.classList.remove("hidden");
+  els.gate.classList.add("hidden");
+  els.appRoot.classList.remove("hidden");
   els.statusServer.textContent = info.server;
   els.statusDb.textContent = info.database + " · " + info.table_count + " tablo";
   renderRoleBadge(info.role);
@@ -82,10 +82,11 @@ function renderRoleBadge(role) {
 
 function setDisconnected() {
   state.connected = false;
-  els.disconnectedView.classList.remove("hidden");
-  els.connectedView.classList.add("hidden");
+  els.appRoot.classList.add("hidden");
+  els.gate.classList.remove("hidden");
   els.inQuestion.disabled = true;
   els.btnAsk.disabled = true;
+  document.getElementById("in-password").value = "";
 }
 
 // ---------- Soru sorma ----------
