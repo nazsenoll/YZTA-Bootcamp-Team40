@@ -11,16 +11,42 @@
 </head>
 <body>
 
-<div class="gate" id="gate">
+<div class="gate" id="login-gate">
   <div class="gate-card">
     <div class="gate-card-head">
       <div class="gate-brand-row">
         <div class="logo-chip logo-chip-md"><img src="{{ url_for('static', filename='img/logo-mark.png') }}" alt="AskQL"></div>
         <span class="gate-brand-name">AskQL</span>
       </div>
-      <h1 class="gate-card-title">Bağlan</h1>
+      <h1 class="gate-card-title">Giriş Yap</h1>
     </div>
-    <p class="gate-card-sub">Veritabanına Türkçe soru sormak için önce bağlan.</p>
+    <p class="gate-card-sub">Hesabınla giriş yap, veritabanı bağlantısını sonraki adımda ayarlayacaksın.</p>
+
+    <div class="float-field">
+      <input type="email" id="in-email" class="gate-input" placeholder=" " autocomplete="username">
+      <label for="in-email">E-posta</label>
+    </div>
+
+    <div class="float-field">
+      <input type="password" id="in-app-password" class="gate-input" placeholder=" " autocomplete="current-password">
+      <label for="in-app-password">Şifre</label>
+    </div>
+
+    <button class="gate-submit" id="btn-login">Giriş Yap</button>
+    <div class="hint-error" id="login-error"></div>
+  </div>
+</div>
+
+<div class="gate hidden" id="db-gate">
+  <div class="gate-card">
+    <div class="gate-card-head">
+      <div class="gate-brand-row">
+        <div class="logo-chip logo-chip-md"><img src="{{ url_for('static', filename='img/logo-mark.png') }}" alt="AskQL"></div>
+        <span class="gate-brand-name">AskQL</span>
+      </div>
+      <h1 class="gate-card-title">Veritabanı Bağlantısı</h1>
+    </div>
+    <p class="gate-card-sub">Sorularını çalıştırabilmemiz için SQL Server bilgilerini gir.</p>
 
     <div class="float-field">
       <input type="text" id="in-server" class="gate-input" placeholder=" " autocomplete="off">
@@ -72,6 +98,7 @@
       </div>
       <div class="role-badge" id="role-badge"></div>
       <button class="btn-ghost" id="btn-disconnect">Bağlantıyı değiştir</button>
+      <button class="btn-ghost" id="btn-logout">Çıkış yap</button>
     </div>
 
     <div class="pipeline-note">
