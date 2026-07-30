@@ -6,49 +6,47 @@
 <title>SQL AI Analyst</title>
 <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo-mark.png') }}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
 
 <div class="gate" id="gate">
-  <div class="gate-brand">
-    <div class="gate-watermark" aria-hidden="true">?</div>
-    <div class="logo-chip logo-chip-lg"><img src="{{ url_for('static', filename='img/logo-mark.png') }}" alt="AskQL"></div>
-    <div class="gate-headline">SQL yazma,<br><span class="gate-accent">sadece sor.</span></div>
-    <div class="gate-tagline">Türkçe soru → doğrulanmış T-SQL → grafik → yorum. Hepsi tek ekranda.</div>
-
-    <div class="gate-steps">
-      <div class="gate-steps-label">nasıl çalışır</div>
-      <div class="gate-step"><span class="gate-step-num">1</span><span>bağlan</span></div>
-      <div class="gate-step"><span class="gate-step-num">2</span><span>soru sor</span></div>
-      <div class="gate-step"><span class="gate-step-num">3</span><span>sonucu gör</span></div>
+  <div class="gate-card">
+    <div class="gate-card-head">
+      <div class="gate-brand-row">
+        <div class="logo-chip logo-chip-md"><img src="{{ url_for('static', filename='img/logo-mark.png') }}" alt="AskQL"></div>
+        <span class="gate-brand-name">AskQL</span>
+      </div>
+      <h1 class="gate-card-title">Bağlan</h1>
     </div>
-  </div>
+    <p class="gate-card-sub">Veritabanına Türkçe soru sormak için önce bağlan.</p>
 
-  <div class="gate-form">
-    <div class="gate-form-label">01 · veritabanı bağlantısı</div>
+    <div class="float-field">
+      <input type="text" id="in-server" class="gate-input" placeholder=" " autocomplete="off">
+      <label for="in-server">Sunucu</label>
+    </div>
+    <div class="gate-hint">örn. DESKTOP-AB12CD\SQLEXPRESS</div>
 
-    <label for="in-server" class="gate-label">Sunucu</label>
-    <input type="text" id="in-server" class="gate-input" placeholder="DESKTOP-AB12CD\SQLEXPRESS" autocomplete="off">
-
-    <label for="in-database" class="gate-label">Veritabanı</label>
-    <input type="text" id="in-database" class="gate-input" placeholder="Eticaret" autocomplete="off">
+    <div class="float-field">
+      <input type="text" id="in-database" class="gate-input" placeholder=" " autocomplete="off">
+      <label for="in-database">Veritabanı</label>
+    </div>
 
     <div class="gate-row">
-      <div>
-        <label for="in-username" class="gate-label">Kullanıcı adı</label>
-        <input type="text" id="in-username" class="gate-input" placeholder="sa" autocomplete="username">
+      <div class="float-field">
+        <input type="text" id="in-username" class="gate-input" placeholder=" " autocomplete="username">
+        <label for="in-username">Kullanıcı adı</label>
       </div>
-      <div>
-        <label for="in-password" class="gate-label">Şifre</label>
-        <input type="password" id="in-password" class="gate-input" placeholder="••••••••" autocomplete="current-password">
+      <div class="float-field">
+        <input type="password" id="in-password" class="gate-input" placeholder=" " autocomplete="current-password">
+        <label for="in-password">Şifre</label>
       </div>
     </div>
 
-    <button class="gate-submit" id="btn-connect">Bağlan →</button>
+    <button class="gate-submit" id="btn-connect">Bağlan</button>
     <div class="hint-error" id="connect-error"></div>
-    <div class="gate-note">bilgiler yalnızca bu oturumda tutulur</div>
+    <p class="gate-footnote">Bilgiler yalnızca bu oturumda tutulur, hiçbir yerde saklanmaz.</p>
   </div>
 </div>
 
