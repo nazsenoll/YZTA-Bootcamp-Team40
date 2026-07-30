@@ -11,41 +11,181 @@
 </head>
 <body>
 
-<div class="gate" id="login-gate">
-  <div class="gate-card">
-    <div class="gate-card-head">
-      <div class="gate-brand-row">
-        <div class="logo-chip logo-chip-md"><img src="{{ url_for('static', filename='img/logo-mark.png') }}" alt="AskQL"></div>
-        <span class="gate-brand-name">AskQL</span>
+<div class="gate gate-wide" id="auth-gate">
+  <div class="gate-bg" aria-hidden="true">
+    <div class="gate-orb gate-orb-1"></div>
+    <div class="gate-orb gate-orb-2"></div>
+    <div class="gate-orb gate-orb-3"></div>
+  </div>
+
+  <div class="gate-hero">
+    <div class="hero-brand-row">
+      <div class="logo-chip logo-chip-md"><img src="{{ url_for('static', filename='img/logo-mark.png') }}" alt="AskQL"></div>
+      <div>
+        <div class="hero-brand-name">AskQL</div>
+        <div class="hero-brand-sub">SQL AI Analyst</div>
       </div>
-      <h1 class="gate-card-title">Giriş Yap</h1>
-    </div>
-    <p class="gate-card-sub">Hesabınla giriş yap, veritabanı bağlantısını sonraki adımda ayarlayacaksın.</p>
-
-    <div class="float-field">
-      <input type="email" id="in-email" class="gate-input" placeholder=" " autocomplete="username">
-      <label for="in-email">E-posta</label>
     </div>
 
-    <div class="float-field">
-      <input type="password" id="in-app-password" class="gate-input" placeholder=" " autocomplete="current-password">
-      <label for="in-app-password">Şifre</label>
+    <h1 class="hero-headline">Doğal dil ile<br><span class="hero-accent">veritabanınızı</span> anlayın.</h1>
+    <p class="hero-tagline">Türkçe sorun, AskQL sizin için SQL yazsın, çalıştırsın, sonucu yorumlasın.</p>
+
+    <div class="hero-mockups" aria-hidden="true">
+      <div class="mock-panel mock-sql">
+        <div class="mock-panel-head"><span>Üretilen SQL</span><span class="mock-panel-x">×</span></div>
+        <div class="mock-sql-line"><span class="tok-kw">SELECT</span> c.category_name,</div>
+        <div class="mock-sql-line"><span class="tok-fn">SUM</span>(o.total_amount) <span class="tok-kw">AS</span> toplam</div>
+        <div class="mock-sql-line"><span class="tok-kw">FROM</span> orders o</div>
+        <div class="mock-sql-line"><span class="tok-kw">JOIN</span> categories c <span class="tok-kw">ON</span> o.cid=c.id</div>
+        <div class="mock-sql-line"><span class="tok-kw">GROUP BY</span> c.category_name</div>
+      </div>
+      <div class="mock-panel mock-table">
+        <div class="mock-panel-head"><span>Sonuç</span><span class="mock-panel-x">⋮</span></div>
+        <div class="mock-table-row mock-table-header"><span>Kategori</span><span>Tutar</span></div>
+        <div class="mock-table-row"><span>Elektronik</span><span>1.250.000₺</span></div>
+        <div class="mock-table-row"><span>Ev &amp; Yaşam</span><span>950.750₺</span></div>
+        <div class="mock-table-row"><span>Giyim</span><span>630.400₺</span></div>
+      </div>
+      <div class="mock-db-illustration">
+        <svg viewBox="0 0 120 130" width="100%" height="100%">
+          <ellipse cx="60" cy="20" rx="46" ry="14" class="mock-db-ring"></ellipse>
+          <path d="M14 20 L14 60 A46 14 0 0 0 106 60 L106 20" class="mock-db-body"></path>
+          <path d="M14 45 L14 85 A46 14 0 0 0 106 85 L106 45" class="mock-db-body"></path>
+          <path d="M14 70 L14 108 A46 14 0 0 0 106 108 L106 70" class="mock-db-body"></path>
+          <ellipse cx="60" cy="108" rx="46" ry="14" class="mock-db-base"></ellipse>
+        </svg>
+      </div>
     </div>
 
-    <button class="gate-submit" id="btn-login">Giriş Yap</button>
-    <div class="hint-error" id="login-error"></div>
+    <div class="hero-features">
+      <div class="hero-feature">
+        <span class="hero-feature-icon">◆</span>
+        <div>
+          <div class="hero-feature-title">Doğal Dil ile Sorgu</div>
+          <div class="hero-feature-desc">Türkçe sorun, SQL bilmeden veri analiz edin.</div>
+        </div>
+      </div>
+      <div class="hero-feature">
+        <span class="hero-feature-icon">◆</span>
+        <div>
+          <div class="hero-feature-title">Rol Bazlı Güvenlik</div>
+          <div class="hero-feature-desc">Yetki, bağlandığınız girişin izninden gelir.</div>
+        </div>
+      </div>
+      <div class="hero-feature">
+        <span class="hero-feature-icon">◆</span>
+        <div>
+          <div class="hero-feature-title">Anında Görselleştirme</div>
+          <div class="hero-feature-desc">Sonuca uygun grafik türünü otomatik seçer.</div>
+        </div>
+      </div>
+      <div class="hero-feature">
+        <span class="hero-feature-icon">◆</span>
+        <div>
+          <div class="hero-feature-title">AI Yorum ve İçgörüler</div>
+          <div class="hero-feature-desc">Sonuçları Türkçe yorumlar, içgörü sunar.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-trust">
+      <span class="hero-trust-icon">🔒</span>
+      <span><strong>Verileriniz güvende.</strong> Sadece yetkili işlemler, onayınızla çalışır.</span>
+    </div>
+  </div>
+
+  <div class="gate-card-col">
+    <div class="gate-card">
+      <div class="gate-brand-center">
+        <div class="logo-chip logo-chip-lg"><img src="{{ url_for('static', filename='img/logo-mark.png') }}" alt="AskQL"></div>
+      </div>
+
+      <div id="login-form">
+        <h2 class="gate-card-title-center" id="login-title">AskQL'e Hoş Geldiniz!</h2>
+        <p class="gate-card-sub">Hesabınıza giriş yaparak devam edin.</p>
+
+        <div class="icon-field">
+          <span class="icon-field-icon">✉</span>
+          <div class="float-field icon-float-field">
+            <input type="email" id="in-email" class="gate-input" placeholder=" " autocomplete="username">
+            <label for="in-email">E-posta</label>
+          </div>
+        </div>
+
+        <div class="icon-field">
+          <span class="icon-field-icon">🔒</span>
+          <div class="float-field icon-float-field">
+            <input type="password" id="in-app-password" class="gate-input" placeholder=" " autocomplete="current-password">
+            <label for="in-app-password">Şifre</label>
+          </div>
+          <button type="button" class="pw-toggle" id="toggle-login-pw" aria-label="Şifreyi göster">👁</button>
+        </div>
+
+        <div class="gate-aux-row">
+          <label class="remember-check">
+            <input type="checkbox" id="remember-me">
+            <span class="remember-box"></span>
+            Beni hatırla
+          </label>
+        </div>
+
+        <button class="gate-submit" id="btn-login"><span>Giriş Yap →</span></button>
+        <div class="hint-error" id="login-error"></div>
+
+        <p class="gate-switch-line">Hesabınız yok mu? <a href="#" id="link-to-register">Kayıt Ol</a></p>
+      </div>
+
+      <div id="register-form" class="hidden">
+        <h2 class="gate-card-title-center">Hesap Oluştur</h2>
+        <p class="gate-card-sub">Yeni bir hesap oluştur, hemen kullanmaya başla.</p>
+
+        <div class="icon-field">
+          <span class="icon-field-icon">✉</span>
+          <div class="float-field icon-float-field">
+            <input type="email" id="reg-email" class="gate-input" placeholder=" " autocomplete="email">
+            <label for="reg-email">E-posta</label>
+          </div>
+        </div>
+
+        <div class="icon-field">
+          <span class="icon-field-icon">🔒</span>
+          <div class="float-field icon-float-field">
+            <input type="password" id="reg-password" class="gate-input" placeholder=" " autocomplete="new-password">
+            <label for="reg-password">Şifre</label>
+          </div>
+        </div>
+        <div class="gate-hint">en az 6 karakter</div>
+
+        <div class="icon-field">
+          <span class="icon-field-icon">🔒</span>
+          <div class="float-field icon-float-field">
+            <input type="password" id="reg-password-confirm" class="gate-input" placeholder=" " autocomplete="new-password">
+            <label for="reg-password-confirm">Şifre (tekrar)</label>
+          </div>
+        </div>
+
+        <button class="gate-submit" id="btn-register"><span>Kayıt Ol</span></button>
+        <div class="hint-error" id="register-error"></div>
+
+        <p class="gate-switch-line">Zaten hesabınız var mı? <a href="#" id="link-to-login">Giriş Yap</a></p>
+      </div>
+    </div>
   </div>
 </div>
 
 <div class="gate hidden" id="db-gate">
+  <div class="gate-bg" aria-hidden="true">
+    <div class="gate-orb gate-orb-1"></div>
+    <div class="gate-orb gate-orb-2"></div>
+    <div class="gate-orb gate-orb-3"></div>
+  </div>
+
   <div class="gate-card">
-    <div class="gate-card-head">
-      <div class="gate-brand-row">
-        <div class="logo-chip logo-chip-md"><img src="{{ url_for('static', filename='img/logo-mark.png') }}" alt="AskQL"></div>
-        <span class="gate-brand-name">AskQL</span>
-      </div>
-      <h1 class="gate-card-title">Veritabanı Bağlantısı</h1>
+    <div class="gate-brand-center">
+      <div class="logo-chip logo-chip-md"><img src="{{ url_for('static', filename='img/logo-mark.png') }}" alt="AskQL"></div>
+      <span class="gate-brand-name">AskQL</span>
     </div>
+    <h1 class="gate-card-title-center">Veritabanı Bağlantısı</h1>
     <p class="gate-card-sub">Sorularını çalıştırabilmemiz için SQL Server bilgilerini gir.</p>
 
     <div class="float-field">
@@ -70,9 +210,10 @@
       </div>
     </div>
 
-    <button class="gate-submit" id="btn-connect">Bağlan</button>
+    <button class="gate-submit" id="btn-connect"><span>Bağlan</span></button>
     <div class="hint-error" id="connect-error"></div>
     <p class="gate-footnote">Bilgiler yalnızca bu oturumda tutulur, hiçbir yerde saklanmaz.</p>
+    <button type="button" class="gate-switch-account" id="btn-switch-account">Farklı hesapla giriş yap</button>
   </div>
 </div>
 
