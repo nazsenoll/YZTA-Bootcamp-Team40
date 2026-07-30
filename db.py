@@ -75,28 +75,44 @@ def get_schema() -> dict:
 
 
 def get_schema_text() -> str:
-    """LLM promptuna gomulecek okunabilir sema metni."""
+    """LLM promptuna gomulecek okunabilir sema metni.
+    ZORUNLU etiketi: kolon NOT NULL ve varsayilan degeri yoksa -- bu durumda INSERT
+    sirasinda deger MUTLAKA verilmelidir, aksi halde sorgu veritabani hatasiyla basarisiz olur.
+    """
     schema = get_schema()
     lines = []
     for table, columns in schema.items():
-        col_desc = ", ".join(f"{c['name']} ({c['type']})" for c in columns)
+        parts = []
+        for c in columns:
+            tag = ""
+            if not c["nullable"] and not c["has_default"]:
+                tag = " ZORUNLU"
+            elif c["has_default"]:
+                tag = " varsayilani_var"
+            parts.append(f"{c['name']} ({c['type']}{tag})")
+        col_desc = ", ".join(parts)
         lines.append(f"- {table}: {col_desc}")
     return "\n".join(lines)
 
 
 def _read_schema(conn) -> dict:
-    """Bagli veritabanindaki tablo ve kolonlari okur."""
+    """Bagli veritabanindaki tablo, kolon, nullable ve default bilgilerini okur."""
     cursor = conn.cursor()
     cursor.execute(
         """
-        SELECT TABLE_NAME, COLUMN_NAME, DATA_TYPE
+        SELECT TABLE_NAME, COLUMN_NAME, DATA_TYPE, IS_NULLABLE, COLUMN_DEFAULT
         FROM INFORMATION_SCHEMA.COLUMNS
         ORDER BY TABLE_NAME, ORDINAL_POSITION
         """
     )
     schema = {}
-    for table_name, column_name, data_type in cursor.fetchall():
-        schema.setdefault(table_name, []).append({"name": column_name, "type": data_type})
+    for table_name, column_name, data_type, is_nullable, column_default in cursor.fetchall():
+        schema.setdefault(table_name, []).append({
+            "name": column_name,
+            "type": data_type,
+            "nullable": (is_nullable == "YES"),
+            "has_default": column_default is not None,
+        })
     cursor.close()
     return schema
 

@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request, session
 
 import chart
 import db
@@ -11,6 +11,8 @@ import llm
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-key")
+
+MAX_HISTORY = 5
 
 
 @app.route("/")
@@ -34,12 +36,16 @@ def api_connect():
     except db.DBError as e:
         return jsonify({"ok": False, "error": str(e)}), 400
 
+    # Yeni baglantida onceki konusma gecmisi artik alakasiz -> temizle.
+    session.pop("history", None)
+
     return jsonify({"ok": True, "info": info})
 
 
 @app.route("/api/disconnect", methods=["POST"])
 def api_disconnect():
     db.disconnect()
+    session.pop("history", None)
     return jsonify({"ok": True})
 
 
@@ -50,11 +56,25 @@ def api_status():
     return jsonify({"connected": True, "info": db.get_connection_info()})
 
 
+@app.route("/api/reset_history", methods=["POST"])
+def api_reset_history():
+    """Kullanici konusma gecmisini elle temizlemek isterse (ör. 'yeni sohbet' butonu)."""
+    session.pop("history", None)
+    return jsonify({"ok": True})
+
+
 @app.route("/api/ask", methods=["POST"])
 def api_ask():
     """Kullanicinin dogal dil sorusunu/komutunu SQL'e cevirir.
     SELECT ise direkt calistirip sonucu + yorumu + grafigi dondurur.
     write (DELETE/UPDATE/vb.) ise calistirmadan SQL'i onaya sunar.
+
+    Pipeline:
+      1) llm.generate_sql_with_retry -> Turkce soru (+ konusma gecmisi) -> SQL,
+         hatali SQL'i sinirli sayida kendi kendine dener/duzeltir. Calistirma ve rol
+         bazli guvenlik kontrolu HER ZAMAN bu fonksiyonun icinde, bizim kodumuzda yapilir.
+      2) llm.suggest_chart     -> sonuc -> SADECE grafik turu/eksen karari
+      3) llm.interpret_results -> sonuc -> SADECE Turkce yorum metni
     """
     if not db.is_connected():
         return jsonify({"ok": False, "error": "Once bir veritabanina baglanmalisin."}), 400
@@ -69,90 +89,111 @@ def api_ask():
         return jsonify({"ok": False, "error": "Gecersiz rol."}), 400
 
     schema_text = db.get_schema_text()
+    history_entries = session.get("history", [])
+    history_messages = llm.build_history_messages(history_entries)
 
+    # --- 1) Adim: SQL uretimi + sinirli kendi-kendini-duzeltme ---
     try:
-        sql_result = llm.generate_sql(question, schema_text, role)
+        result = llm.generate_sql_with_retry(
+            question, schema_text, role, history=history_messages, max_attempts=3
+        )
     except Exception as e:
         return jsonify({"ok": False, "error": f"SQL uretilemedi: {e}"}), 500
 
-    query_type = sql_result.get("query_type")
-    sql = sql_result.get("sql", "")
+    sql = result.get("sql", "")
 
-    if query_type == "izin_yok":
+    if result.get("error") == "izin_yok":
         return jsonify({
             "ok": False,
             "error": "Bu islem analist rolu icin izinli degil (sadece SELECT calistirabilirsin).",
         }), 403
 
-    # Guvenlik: LLM'in soyledigi tip ile SQL'in gercek tipi eslesmiyorsa gercek tipe guven
-    actual_type = db.classify_query(sql)
-
-    if role == "analist" and actual_type != "select":
+    if result.get("error") == "rol_yetkisiz":
         return jsonify({
             "ok": False,
             "error": "Analist rolunde sadece SELECT sorgusu calistirilabilir.",
         }), 403
 
-    if actual_type == "select":
-        try:
-            columns, rows = db.run_select(sql)
-        except db.DBError as e:
-            # tek seferlik otomatik duzeltme denemesi
-            try:
-                fixed = llm.fix_sql(question, schema_text, role, sql, str(e))
-                sql = fixed.get("sql", sql)
-                if db.classify_query(sql) != "select":
-                    raise db.DBError(str(e))
-                columns, rows = db.run_select(sql)
-            except db.DBError as e2:
-                return jsonify({"ok": False, "error": str(e2), "sql": sql}), 400
-
-        try:
-            interpretation = llm.interpret_results(question, sql, columns, rows)
-        except Exception as e:
-            interpretation = {"yorum": f"Yorum uretilemedi: {e}", "chart_type": "none"}
-
-        chart_data_url = chart.build_chart(
-            interpretation.get("chart_type", "none"),
-            columns,
-            rows,
-            interpretation.get("x_column", ""),
-            interpretation.get("y_column", ""),
-            interpretation.get("title", ""),
-        )
-
+    if result.get("error") == "eksik_bilgi":
+        eksik = result.get("eksik_alanlar", [])
+        eksik_metni = ", ".join(eksik) if eksik else "gerekli bazi bilgiler"
         return jsonify({
-            "ok": True,
-            "type": "select",
-            "sql": sql,
-            "columns": columns,
-            "rows": rows[:100],
-            "row_count": len(rows),
-            "yorum": interpretation.get("yorum", ""),
-            "chart": chart_data_url,
-        })
+            "ok": False,
+            "error": "eksik_bilgi",
+            "eksik_alanlar": eksik,
+            "message": f"Bu islemi yapabilmem icin su bilgiye ihtiyacim var: {eksik_metni}. "
+                       f"{result.get('aciklama', '')}".strip(),
+        }), 400
 
-    else:
+    if not result.get("ok"):
+        return jsonify({"ok": False, "error": result.get("error", "Sorgu calistirilamadi."), "sql": sql}), 400
+
+    if "columns" not in result:
         # write islemi: calistirmadan once onaya sun
         return jsonify({
             "ok": True,
             "type": "write",
             "sql": sql,
-            "aciklama": sql_result.get("aciklama", ""),
-            "uyari": sql_result.get("uyari", ""),
+            "aciklama": result.get("aciklama", ""),
+            "uyari": result.get("uyari", ""),
             "needs_confirmation": True,
         })
+
+    columns = result["columns"]
+    rows = result["rows"]
+
+    # --- 2) Adim: Grafik karari (yorumdan bagimsiz) ---
+    try:
+        chart_choice = llm.suggest_chart(question, sql, columns, rows)
+    except Exception:
+        chart_choice = {"chart_type": "none", "x_column": "", "y_column": "", "title": ""}
+
+    # --- 3) Adim: Yorum metni (grafik kararindan bagimsiz) ---
+    try:
+        interpretation = llm.interpret_results(question, sql, columns, rows)
+    except Exception as e:
+        interpretation = {"yorum": f"Yorum uretilemedi: {e}"}
+
+    chart_data_url = chart.build_chart(
+        chart_choice.get("chart_type", "none"),
+        columns,
+        rows,
+        chart_choice.get("x_column", ""),
+        chart_choice.get("y_column", ""),
+        chart_choice.get("title", ""),
+    )
+
+    # Konusma gecmisini guncelle (sonraki sorularda baglam icin kullanilir).
+    yorum_text = interpretation.get("yorum", "")
+    history_entries.append({"question": question, "sql": sql, "summary": yorum_text[:300]})
+    session["history"] = history_entries[-MAX_HISTORY:]
+
+    return jsonify({
+        "ok": True,
+        "type": "select",
+        "sql": sql,
+        "columns": columns,
+        "rows": rows[:100],
+        "row_count": len(rows),
+        "yorum": yorum_text,
+        "chart": chart_data_url,
+    })
 
 
 @app.route("/api/execute", methods=["POST"])
 def api_execute():
-    """Kullanici DELETE/UPDATE sorgusunu onayladiktan sonra buraya dusen calistirma adimi."""
+    """Kullanici DELETE/UPDATE sorgusunu onayladiktan sonra buraya dusen calistirma adimi.
+    Rol kontrolu burada, bizim kodumuzda yapilir -- LLM'in bu kontrolu atlamasi mumkun degil.
+    DB hatasi olursa (ör. NOT NULL ihlali, tip uyusmazligi) sinirli sayida kendi kendini
+    duzeltip tekrar dener (ayni SELECT akisindaki gibi)."""
     if not db.is_connected():
         return jsonify({"ok": False, "error": "Once bir veritabanina baglanmalisin."}), 400
 
     data = request.get_json(force=True)
     sql = (data.get("sql") or "").strip()
     role = data.get("role") or "analist"
+    # Onay ekranindan gelen orijinal soru; self-healing'e baglam saglar (opsiyonel).
+    question = (data.get("question") or "Kullanicinin onayladigi yazma islemi").strip()
 
     if role != "yonetici":
         return jsonify({"ok": False, "error": "Sadece yonetici rolu yazma islemi onaylayabilir."}), 403
@@ -160,12 +201,13 @@ def api_execute():
     if db.classify_query(sql) != "write":
         return jsonify({"ok": False, "error": "Bu SQL bir yazma sorgusu degil."}), 400
 
-    try:
-        affected = db.run_write(sql)
-    except db.DBError as e:
-        return jsonify({"ok": False, "error": str(e)}), 400
+    schema_text = db.get_schema_text()
+    result = llm.execute_write_with_retry(question, schema_text, sql, max_attempts=3)
 
-    return jsonify({"ok": True, "affected_rows": affected})
+    if not result["ok"]:
+        return jsonify({"ok": False, "error": result["error"], "sql": result["sql"]}), 400
+
+    return jsonify({"ok": True, "affected_rows": result["affected_rows"], "sql": result["sql"]})
 
 
 if __name__ == "__main__":
