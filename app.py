@@ -1,4 +1,6 @@
+import hmac
 import os
+from functools import wraps
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -14,13 +16,68 @@ app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-key")
 
 MAX_HISTORY = 5
 
+# Uygulama girisi (email + sifre) icin tek sabit hesap -- kullanici tablosu yok,
+# .env'den okunur. Bu, veritabani baglantisindan (SQL Server kimlik bilgileri)
+# tamamen AYRI bir kimlik dogrulama katmani; ikisi birbirine karismaz.
+APP_EMAIL = os.environ.get("APP_EMAIL", "")
+APP_PASSWORD = os.environ.get("APP_PASSWORD", "")
+
+
+def login_required(view):
+    """Bu decorator ile isaretlenen route'lar, once /api/login ile giris
+    yapilmis olmasini sart kosar. Veritabani baglantisindan bagimsizdir."""
+    @wraps(view)
+    def wrapped(*args, **kwargs):
+        if not session.get("authenticated"):
+            return jsonify({"ok": False, "error": "Once giris yapmalisin."}), 401
+        return view(*args, **kwargs)
+    return wrapped
+
 
 @app.route("/")
 def index():
     return render_template("index.html")
 
 
+@app.route("/api/login", methods=["POST"])
+def api_login():
+    data = request.get_json(force=True)
+    email = (data.get("email") or "").strip().lower()
+    password = data.get("password") or ""
+
+    if not email or not password:
+        return jsonify({"ok": False, "error": "E-posta ve sifre gerekli."}), 400
+
+    if not APP_EMAIL or not APP_PASSWORD:
+        return jsonify({"ok": False, "error": "Sunucu tarafinda giris bilgisi yapilandirilmamis (.env)."}), 500
+
+    email_ok = hmac.compare_digest(email, APP_EMAIL.strip().lower())
+    password_ok = hmac.compare_digest(password, APP_PASSWORD)
+
+    if not (email_ok and password_ok):
+        return jsonify({"ok": False, "error": "E-posta veya sifre hatali."}), 401
+
+    session["authenticated"] = True
+    session["email"] = email
+    return jsonify({"ok": True, "email": email})
+
+
+@app.route("/api/logout", methods=["POST"])
+def api_logout():
+    db.disconnect()
+    session.clear()
+    return jsonify({"ok": True})
+
+
+@app.route("/api/auth_status", methods=["GET"])
+def api_auth_status():
+    if not session.get("authenticated"):
+        return jsonify({"authenticated": False})
+    return jsonify({"authenticated": True, "email": session.get("email", "")})
+
+
 @app.route("/api/connect", methods=["POST"])
+@login_required
 def api_connect():
     data = request.get_json(force=True)
     server = (data.get("server") or "").strip()
@@ -46,6 +103,7 @@ def api_connect():
 
 
 @app.route("/api/disconnect", methods=["POST"])
+@login_required
 def api_disconnect():
     db.disconnect()
     session.pop("history", None)
@@ -53,6 +111,7 @@ def api_disconnect():
 
 
 @app.route("/api/status", methods=["GET"])
+@login_required
 def api_status():
     if not db.is_connected():
         return jsonify({"connected": False})
@@ -60,6 +119,7 @@ def api_status():
 
 
 @app.route("/api/reset_history", methods=["POST"])
+@login_required
 def api_reset_history():
     """Kullanici konusma gecmisini elle temizlemek isterse (ör. 'yeni sohbet' butonu)."""
     session.pop("history", None)
@@ -67,6 +127,7 @@ def api_reset_history():
 
 
 @app.route("/api/ask", methods=["POST"])
+@login_required
 def api_ask():
     """Kullanicinin dogal dil sorusunu/komutunu SQL'e cevirir.
     SELECT ise direkt calistirip sonucu + yorumu + grafigi dondurur.
@@ -184,6 +245,7 @@ def api_ask():
 
 
 @app.route("/api/execute", methods=["POST"])
+@login_required
 def api_execute():
     """Kullanici DELETE/UPDATE sorgusunu onayladiktan sonra buraya dusen calistirma adimi.
     Rol kontrolu burada, bizim kodumuzda yapilir -- LLM'in bu kontrolu atlamasi mumkun degil.
