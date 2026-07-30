@@ -45,11 +45,22 @@ html, body {
   justify-content: space-between;
 }
 
-.gate-mark {
-  font-size: 28px;
-  color: #0a1210;
-  margin-bottom: 18px;
+.logo-chip {
+  background: rgba(255,255,255,0.94);
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
+.logo-chip img {
+  display: block;
+  height: auto;
+}
+.logo-chip-sm { width: 34px; height: 34px; padding: 5px; border-radius: 8px; }
+.logo-chip-md { width: 52px; height: 52px; padding: 8px; margin: 0 auto 10px; }
+.logo-chip-lg { width: 64px; height: 64px; padding: 10px; margin-bottom: 18px; }
+.logo-chip img { width: 100%; }
 
 .gate-headline {
   font-weight: 600;
@@ -197,11 +208,6 @@ html, body {
   display: flex;
   align-items: center;
   gap: 10px;
-}
-
-.brand-mark {
-  color: var(--teal);
-  font-size: 20px;
 }
 
 .brand-title {
@@ -370,11 +376,6 @@ input:focus {
   text-align: center;
   color: var(--text-dim);
   max-width: 360px;
-}
-.empty-mark {
-  font-size: 28px;
-  color: var(--teal-dim);
-  margin-bottom: 10px;
 }
 .empty-example {
   font-family: var(--mono);
