@@ -262,3 +262,131 @@ Sprint 2 sürecinde SQL AI Analyst'in uçtan uca çalışan sürümü geliştiri
 - Güvenliğin yalnızca model talimatlarına bırakılmaması, kod tarafında bağımsız
   bir doğrulama katmanı kurulması gerektiği görülmüştür.
 - Sprint 2 kapanış toplantısı yapılarak sprint tamamlanmıştır.
+
+
+# SPRINT 3
+
+- **Sprint Tarih Aralığı:** 20 Temmuz – 2 Ağustos
+- Bu sprint, projenin **son sprintidir**; proje bu sprintte tamamlanmıştır.
+- [Sprint 3 süreci](https://canva.link/0zsy7vjj6uxodpf) ile ilgili tüm görseller buradadır.
+
+## Sprint içi puan değerlendirmesi
+**Sprint içi puan değerlendirmesi:** 50 puan olarak belirlenmiş olup, **Sprint 3 tamamlanma puanı: 50 / 50**
+
+Sprint kapsamındaki görevlerin çoğu High (Yüksek) öncelikli kabul edilerek 3'er puan, marka kimliği/isim/logo çalışması ise Medium (Orta) öncelikli kabul edilerek 2 puan üzerinden değerlendirilmiş ve hedeflenen 50 puanın tamamı tamamlanmıştır.
+
+## Geliştirilen Yapı
+
+Sprint 2 sonunda uçtan uca çalışan hale getirilen uygulama, Sprint 3'te kimlik doğrulama, yetkilendirme, kurumsal kullanım (şirket/çalışan yönetimi) ve arayüz açısından olgunlaştırılarak sunuma hazır hale getirilmiştir.
+
+### Teknoloji Yığını
+| Katman | Teknoloji |
+|---|---|
+| Web çatısı | Flask 3.0.3 |
+| LLM orkestrasyonu | LangChain |
+| LLM | OpenAI gpt-4o-mini (JSON mode) |
+| Veritabanı (iş verisi) | Microsoft SQL Server (pyodbc) |
+| Kullanıcı / şirket verisi | Supabase (PostgreSQL + Auth) |
+| Yayına alma | Railway |
+| Görselleştirme | matplotlib |
+| Arayüz | HTML / CSS / Vanilla JavaScript |
+| Tipografi | Inter, Space Grotesk, JetBrains Mono |
+| Veri işleme | pandas |
+
+### Modüller
+
+**Kimlik doğrulama (`auth.py` → Supabase)**
+Önce yerel, dosya tabanlı bir kullanıcı deposu (`users.db`, SQLite) ile başlandı; ardından üretime uygun hale getirmek için kimlik doğrulama Supabase'e taşındı. E-posta ile gönderilen şifre üzerinden sisteme giriş desteklendi.
+
+**`app.py` — API katmanı**
+`/api/register`, `/api/login`, `/api/logout`, `/api/auth_status` uç noktaları eklendi; tüm veri/sorgu uç noktaları `login_required` ile korunuyor. "Beni hatırla" ile 30 günlük kalıcı oturum desteklendi.
+
+**`db.py` — Yetkilendirme**
+Sorgu güvenlik denetimi, unvana dayalı yetkilendirme modeline göre güncellendi (bkz. Güvenlik Yaklaşımı).
+
+**Şirket ve çalışan yönetimi**
+Şirket kaydı eklendi; çalışanlar üç kademeli bir unvan sistemiyle (Çalışan / Müdür / Yönetici) sisteme eklenebiliyor. Yetki, bu unvana göre belirleniyor.
+
+**Dışa aktarma**
+Sorgu sonuçlarının PDF ve CSV olarak dışa aktarılması eklendi.
+
+**Raporlar paneli**
+Geçmiş sorguların listelenip tekrar görüntülenebildiği bir panel eklendi.
+
+**Arayüz (`templates/`, `static/`)**
+Sprint 2'de işlevsel düzeyde bırakılan arayüz bu sprintte baştan tasarlandı: marka kimliği (logo, renk paleti, tipografi), giriş/kayıt ve veritabanı bağlantısı adımlarının ayrıştırılması, responsive düzen.
+
+### Güvenlik Yaklaşımı
+
+Sprint 2'deki çok katmanlı güvenlik denetimine ek olarak, bu sprintte yetkilendirme modeli olgunlaştırılmıştır:
+
+- **Yetkilendirmenin istemciden değil sunucudan belirlenmesi:** Önceki sürümde rol istemciden gelen bir değere güveniyordu — teorik olarak isteği değiştirerek yetki yükseltmek mümkündü. Bu ilk olarak, bağlanılan SQL Server girişinin gerçek izinlerine bakılarak düzeltildi; şirket/çalışan yönetimi eklenince yetkilendirme modeli, çalışana şirket yöneticisi tarafından atanan unvana (Çalışan / Müdür / Yönetici) dayanacak şekilde olgunlaştırıldı. Unvan, Supabase'deki çalışan kaydından sunucu tarafında okunur; istemciden gelen bir değere hâlâ güvenilmez — değişen kaynak, korunan ilke aynı kaldı.
+- **Kod tarafı doğrulama korunuyor:** Üretilen her SQL, çalıştırılmadan önce sunucuda bağımsız olarak sınıflandırılır (select/dml/ddl) ve bu sınıflandırma kullanıcının unvanına göre denetlenir; LLM'in beyanına güvenilmez.
+- **Kimlik doğrulama ile yetki ayrıştırıldı:** E-posta/şifre yalnızca uygulamaya erişimi; unvan ise verideki hangi işlemlerin yapılabileceğini belirler. İkisi ayrı katmanlardır.
+- **Şifre güvenliği:** Hesap şifreleri hiçbir zaman düz metin tutulmaz; kimlik doğrulama Supabase'e taşındıktan sonra şifre güvenliği Supabase'in kendi altyapısı tarafından yönetilmektedir.
+
+### Demo Veri Seti
+Sprint 2'deki veri seti değişmeden kullanılmaya devam etmiştir.
+
+## Daily Scrum
+Ekip içi iletişim; Notion üzerinde yürütülen görev kartları, Google Meet aracılığıyla gerçekleştirilen toplantılar ve WhatsApp görüşmeleri ile sağlanmıştır.
+
+### Kullanılan Araçlar
+- [Notion](https://app.notion.com/p/41311c5edb9446e5ab44098fb74f39dd?v=3bd3e3d92a8a4d4dbc1d1263cbfecb69&source=copy_link) (görev takibi, proje veritabanı, board yönetimi)
+- WhatsApp
+- Google Meet
+
+## Sprint 3 Board Durumu
+
+### Done (17)
+- Mevcut kod tabanının (frontend mimarisi, UI, UX, erişilebilirlik) uçtan uca gözden geçirilmesi
+- Form etiketlerinin (`label`) input'lara `for`/`id` ile programatik bağlanması
+- Hata mesajları ve dinamik içerik için `aria-live`/`role="alert"` eklenmesi
+- Kontrast oranı ölçülüp WCAG AA eşiğinin altında kalan hata renginin düzeltilmesi
+- Ürün isminin kesinleşmesi (AskQL), logonun şeffaf arka planlı hale getirilip favicon dahil arayüze entegre edilmesi ve marka kimliğine uygun, responsive giriş ekranı tasarımı
+- Uygulama seviyesinde kimlik doğrulama sisteminin eklenmesi (kayıt, giriş, çıkış, beni hatırla)
+- Yerel kullanıcı deposundan Supabase'e geçiş
+- E-posta ile gönderilen şifre üzerinden sisteme giriş desteklenmesi
+- Giriş/kayıt ve veritabanı bağlantı adımlarının birbirinden ayrıştırılması
+- Şirket kaydı özelliğinin eklenmesi
+- Üç kademeli unvan sistemiyle (Çalışan / Müdür / Yönetici) çalışan ekleme
+- Yetkilendirme modelinin, sunucu tarafında okunan şirket unvanına dayanan modele taşınması
+- Uygulamanın Railway üzerinde canlıya alınması
+- Sorgu sonuçlarının PDF ve CSV olarak dışa aktarılması
+- Raporlar paneli — geçmiş sorguların listelenmesi
+- Backend sistem çalışmaları
+- Kullanıcı deneyimi iyileştirmesi
+
+### In Progress (0)
+- Yok — proje bu sprintte tamamlanmıştır.
+
+### Planned (0)
+- Yok. Değerlendirilip bilinçli olarak kapsam dışı bırakılan tek özellik Google ile giriştir; OAuth altyapısı gerektirdiğinden, sahte/işlevsiz bir görünüm sunmamak için eklenmemiştir.
+
+## Ürün Durumu
+AskQL, bu sprintle birlikte sunuma hazır, uçtan uca çalışan ve Railway üzerinde canlıda bir ürün haline gelmiştir. Kullanıcı önce kendi hesabıyla (e-posta ile gönderilen şifre üzerinden) giriş yapıyor; şirketini kaydedip çalışanlarını unvanlarına göre (Çalışan / Müdür / Yönetici) ekleyebiliyor. SQL Server'a bağlanıp veritabanına Türkçe sorular sorulabiliyor; her cevapta üretilen SQL, sonuç tablosu, grafik ve Türkçe yorum tek ekranda sunuluyor, sonuçlar PDF/CSV olarak dışa aktarılabiliyor ve geçmiş sorgular raporlar panelinden görülebiliyor. Yazma işlemleri kullanıcı onayından geçiyor; yetki artık kullanıcı beyanına değil, çalışana şirket yöneticisi tarafından atanan ve sunucu tarafında okunan unvana göre otomatik belirleniyor.
+
+Ürüne ait güncel arayüz ekranları ve tasarım görsellerine [bu Canva bağlantısından](https://canva.link/0zsy7vjj6uxodpf) ulaşabilirsiniz.
+
+## Sprint Review
+- Kod tabanı uçtan uca gözden geçirildi; erişilebilirlik ve kontrast düzeltmeleri yapıldı.
+- Kimlik doğrulama ve yetkilendirme katmanları bilinçli olarak ayrıştırıldı.
+- Yetkilendirme, istemciden gelen bir değere değil, sunucu tarafında okunan şirket unvanına dayanan bir modele taşındı.
+- Şirket kaydı, unvana dayalı çalışan yönetimi ve raporlar paneli eklendi.
+- Giriş deneyimi ayrı adımlara bölünüp marka kimliğine kavuşturuldu.
+- Uygulama Railway üzerinde canlıya alındı; sonuç dışa aktarma özelliği eklendi.
+- Proje, sunuma hazır durumdadır.
+
+### Sprint Review Katılımcıları
+- Helin, Ilım Naz, Emre.
+
+## Sprint Retrospective
+- Bu sprintte ekip kompozisyonunda değişiklik yaşanmış, bazı ekip arkadaşlarıyla yollar ayrılmıştır; kalan ekip (Helin, Ilım Naz ve Emre), projeyi tamamlayarak sunuma hazır hale getirmiştir.
+- Net bir tasarım referansı belirlenene kadar birden çok iterasyon denenmesi zaman aldı.
+- Kimlik doğrulama ile veritabanı yetkilendirmesinin ayrı katmanlar olarak kurulması, güvenlik modelinin bozulmadan korunmasını sağladı.
+- Güvenliğin istemci tarafına bırakılmaması gerektiği, bu sprintte somut bir düzeltmeyle bir kez daha teyit edildi.
+- Sprint 3 kapanış toplantısı yapılarak, proje bu sprint ile tamamlanmıştır.
+
+# AskQL Kullanım Kılavuzu
+
+[AskQL Kullanım Kılavuzu (PDF)](./docs/AskQL_Kullanim_Kilavuzu.pdf)
