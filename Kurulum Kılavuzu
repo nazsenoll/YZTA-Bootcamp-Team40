@@ -1,0 +1,182 @@
+# AskQL — Sunucu Kurulum Kılavuzu
+
+Bu doküman, AskQL'i sıfırdan çalışır hale getirmek (yerel geliştirme + Railway'de canlıya alma) için gereken tüm adımları içerir.
+
+---
+
+## 1. Genel Mimari
+
+AskQL üç ayrı, birbirinden bağımsız veri katmanı kullanır:
+
+| Katman | Ne için | Nerede tutulur |
+|---|---|---|
+| **İş verisi (business data)** | Kullanıcının sorguladığı gerçek tablolar (satış, ürün vb.) | SQL Server (kendi sunucun ya da Azure SQL) |
+| **Kullanıcı/şirket verisi** | Giriş, şirket kaydı, çalışan/unvan bilgisi | Supabase (Postgres) |
+| **E-posta gönderimi** | Doğrulama kodu, çalışan daveti | SMTP (Brevo/Gmail vb.) |
+
+Bu üçü birbirine karışmaz — SQL Server'a hangi kullanıcı adıyla bağlandığının, Supabase'deki hesap sistemiyle hiçbir ilgisi yoktur.
+
+---
+
+## 2. Gereksinimler
+
+- Python 3.11+
+- ODBC Driver 17 (veya 18) for SQL Server
+- Bir Supabase projesi (ücretsiz katman yeterli)
+- Bir SMTP hesabı (Brevo ücretsiz katman önerilir, Gmail App Password ile de olur)
+- (Canlıya almak için) Railway hesabı + GitHub reposu
+
+---
+
+## 3. Veritabanı (SQL Server) Kurulumu
+
+İki seçenek var:
+
+### Seçenek A — Azure SQL Database (önerilen, internetten erişim derdi yok)
+
+1. https://portal.azure.com → **SQL databases** → **+ Create**
+2. Server oluştururken **SQL authentication** seç, kullanıcı adı/şifre belirle
+3. **Compute + storage** → **Free / Serverless** katmanını seç
+4. **Networking** sekmesinde **"Allow Azure services and resources to access this server"** işaretle
+5. Bağlantı bilgisi (AskQL'in "Sunucu" alanına gireceğin): `<server-adı>.database.windows.net`
+
+### Seçenek B — Kendi bilgisayarındaki SQL Server (SQLEXPRESS)
+
+Sadece **yerel test** için uygundur; Railway gibi bulut ortamından erişilebilmesi için ekstra adım gerekir (aşağıda).
+
+1. SSMS → sunucuya sağ tık → **Properties → Security** → *"SQL Server and Windows Authentication mode"* seç
+2. **Security → Logins → sa** (ya da yeni bir login) → şifre belirle, **Enabled** yap
+3. **SQL Server Configuration Manager** → **SQL Server Network Configuration → Protocols for SQLEXPRESS** → **TCP/IP** → Enable
+   - TCP/IP → Properties → **IP Addresses** sekmesi → **IPAll** → `TCP Dynamic Ports` boşalt, `TCP Port` = `1433`
+   - (Configuration Manager açılmazsa, aynı ayarları registry üzerinden de yapabilirsin — WMI provider sorunuysa `mofcomp sqlmgmprovider.mof` ile provider'ı yeniden kaydet)
+4. SQL Server servisini yeniden başlat
+5. Doğrula: `netstat -an | findstr 1433` → `0.0.0.0:1433 LISTENING` görmelisin
+6. Windows Firewall'da portu aç (yönetici PowerShell):
+   ```powershell
+   netsh advfirewall firewall add rule name="SQL Server 1433" dir=in action=allow protocol=TCP localport=1433
+   ```
+7. **Sadece Railway'den erişilebilmesi gerekiyorsa:** router'da port yönlendirme (1433 → bilgisayarının yerel IP'si) + public IP'ni öğren (`(Invoke-WebRequest -uri "https://api.ipify.org").Content`). Ev interneti dinamik IP kullandığından bu bağlantı IP değiştiğinde kopar — kalıcı çözüm için DuckDNS gibi bir DDNS servisi kullanmanı öneririz.
+
+---
+
+## 4. Supabase Kurulumu (kullanıcı/şirket verisi)
+
+1. https://supabase.com → yeni proje oluştur
+2. **Project Settings → API** → şu ikisini not al:
+   - `Project URL` → `.env`'de `SUPABASE_URL`
+   - `service_role` anahtarı (⚠️ `anon` key DEĞİL) → `.env`'de `SUPABASE_SERVICE_KEY`
+3. **SQL Editor**'a git, aşağıdaki script'i çalıştır:
+
+```sql
+create table if not exists companies (
+  id bigserial primary key,
+  name text not null,
+  sql_server text,
+  sql_database text,
+  sql_username text,
+  sql_password text,
+  created_at timestamptz default now()
+);
+
+create table if not exists users (
+  id bigserial primary key,
+  email text unique not null,
+  password_hash text not null,
+  company_id bigint references companies(id),
+  title text default 'calisan',
+  verified boolean default false,
+  must_change_password boolean default false,
+  verification_code text,
+  code_expires_at timestamptz,
+  created_at timestamptz default now()
+);
+
+alter table companies disable row level security;
+alter table users disable row level security;
+```
+
+Zaten eski bir `users` tablon varsa (bu projenin önceki sürümünden), onun yerine:
+
+```sql
+alter table users add column if not exists company_id bigint references companies(id);
+alter table users add column if not exists title text default 'calisan';
+alter table users add column if not exists must_change_password boolean default false;
+```
+
+---
+
+## 5. SMTP Kurulumu (e-posta gönderimi)
+
+**Brevo (önerilen, ücretsiz katman yeterli):**
+1. https://brevo.com → hesap oluştur
+2. **SMTP & API → SMTP** sekmesinden bilgileri al: host, port, kullanıcı adı, şifre (SMTP key)
+3. **Senders** kısmından gönderen e-posta adresini doğrula (Brevo, doğrulanmamış adresten gönderime izin vermez)
+
+**Gmail (alternatif):**
+- Google hesabında **App Password** oluşturman gerekir (normal şifre çalışmaz), 2FA açık olmalı.
+
+---
+
+## 6. `.env` Dosyası (yerel geliştirme için)
+
+Proje kökünde (`app.py` ile aynı klasörde) bir `.env` dosyası oluştur:
+
+```env
+FLASK_SECRET_KEY=uzun-rastgele-bir-metin
+OPENAI_API_KEY=sk-...
+
+SUPABASE_URL=https://xxxxx.supabase.co
+SUPABASE_SERVICE_KEY=sb_secret_...
+
+SMTP_HOST=smtp-relay.brevo.com
+SMTP_PORT=587
+SMTP_USERNAME=...
+SMTP_PASSWORD=...
+SMTP_FROM=dogrulanmis-gonderen@ornek.com
+SMTP_USE_TLS=true
+
+ODBC_DRIVER=ODBC Driver 17 for SQL Server
+```
+
+⚠️ `.env` dosyasını **asla** GitHub'a push etme (`.gitignore`'da olmalı) — içinde gizli anahtarlar var.
+
+---
+
+## 7. Yerelde Çalıştırma
+
+```powershell
+pip install -r requirements.txt
+python app.py
+```
+
+`http://127.0.0.1:5000` üzerinde açılır. İlk kullanıcı "Şirket Kaydı Oluştur" ile kayıt olur ve otomatik **yönetici** unvanını alır; SQL Server bağlantısını sadece yönetici kurar, diğer çalışanlar otomatik bağlanır.
+
+---
+
+## 8. Railway'e Canlıya Alma
+
+1. GitHub reponu Railway'e bağla (**New Project → Deploy from GitHub repo**)
+2. **Variables** sekmesinden `.env`'deki **her değeri tek tek** gir (Railway `.env` dosyasını otomatik okumaz!):
+   - `FLASK_SECRET_KEY`, `OPENAI_API_KEY`, `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`, `SMTP_FROM`, `SMTP_USE_TLS`, `ODBC_DRIVER`
+   - ⚠️ Değerleri kopyalarken **özel karakterleri** (tire, alt çizgi vb.) dikkatlice kontrol et — kopyalama sırasında eksilebiliyor
+3. Değişiklik yaptıkça:
+   ```powershell
+   git add .
+   git commit -m "aciklama"
+   git push
+   ```
+   Railway otomatik yeniden deploy eder (**Deployments** sekmesinden takip edebilirsin).
+4. Hata alırsan **Deployments → Deploy Logs**'tan gerçek Python traceback'ini oku — tarayıcı konsolu sadece "500" der, asıl sebebi göstermez.
+
+---
+
+## 9. Sık Karşılaşılan Sorunlar
+
+| Belirti | Sebep | Çözüm |
+|---|---|---|
+| `Login failed for user 'sa'` (18456) | Yanlış şifre / Mixed Mode kapalı | SSMS'te `ALTER LOGIN sa WITH PASSWORD='...'`, Mixed Mode'u kontrol et |
+| `Unable to connect: Adaptive Server is unavailable` | Railway, `HELIN\SQLEXPRESS` gibi yerel bir adı çözemiyor | Public IP+port ya da Azure SQL kullan |
+| `invalid input syntax for type bigint: "None"` | `company_id` boş bir kullanıcı hâlâ DB'de duruyor | `DELETE FROM users WHERE company_id IS NULL;` |
+| Kod değişikliği yerelde çalışıyor ama görünmüyor | Dosya kaydedilmemiş / Flask yeniden başlatılmamış | `Select-String` ile dosya içeriğini doğrula, `Ctrl+C` + `python app.py` |
+| Railway'de 500, `AttributeError: module has no attribute` | Değişiklik push edilmemiş | `git status`, `git push` |
+| "Bağlantı Henüz Kurulmadı" ama bilgiler kayıtlı | Tarayıcıda eski oturum çerezi | Gizli sekmede dene / çıkış yapıp tekrar gir |
