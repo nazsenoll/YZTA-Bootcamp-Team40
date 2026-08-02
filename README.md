@@ -374,6 +374,8 @@ Ekip içi iletişim; Notion üzerinde yürütülen görev kartları, Google Meet
 ## Ürün Durumu
 AskQL, bu sprintle birlikte sunuma hazır, uçtan uca çalışan ve Railway üzerinde canlıda bir ürün haline gelmiştir. Kullanıcı önce kendi hesabıyla (e-posta ile gönderilen şifre üzerinden) giriş yapıyor; şirketini kaydedip çalışanlarını unvanlarına göre (Çalışan / Müdür / Yönetici) ekleyebiliyor. SQL Server'a bağlanıp veritabanına Türkçe sorular sorulabiliyor; her cevapta üretilen SQL, sonuç tablosu, grafik ve Türkçe yorum tek ekranda sunuluyor, sonuçlar PDF/CSV olarak dışa aktarılabiliyor ve geçmiş sorgular raporlar panelinden görülebiliyor. Yazma işlemleri kullanıcı onayından geçiyor; yetki artık kullanıcı beyanına değil, çalışana şirket yöneticisi tarafından atanan ve sunucu tarafında okunan unvana göre otomatik belirleniyor.
 
+<img width="1600" height="759" alt="image" src="https://github.com/user-attachments/assets/64172391-3599-4007-bcda-864873710865" />
+
 Ürüne ait güncel arayüz ekranları ve tasarım görsellerine [bu Canva bağlantısından](https://canva.link/0zsy7vjj6uxodpf) ulaşabilirsiniz.
 
 ## Sprint Review
