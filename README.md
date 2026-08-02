@@ -35,9 +35,10 @@ Türkçe yorum olarak sunar.
 - Veri ekibi olmayan veya veri ekibi yoğun olan şirketler
 - Küçük ve orta ölçekli işletmelerde raporlama ihtiyacı olan yöneticiler
 
-## AskQL Kullanım Kılavuzu
+## AskQL Kullanım ve Kurulum Kılavuzu
 
-📄 [Kullanım kılavuzuna ulaşmak için tıklayın.](./AskQL%20Kullanim%20Kilavuzu.pdf)
+[Kullanım kılavuzuna ulaşmak için tıklayın.](./AskQL%20Kullanim%20Kilavuzu.pdf)
+[Kurulum kılavuzu için tıklayın.](<./AskQL Kurulum Kılavuzu>)
 
 
 ## Sistem Mimarisi
