@@ -392,3 +392,13 @@ AskQL, bu sprintle birlikte sunuma hazır, uçtan uca çalışan ve Railway üze
 
 # AskQL Kullanım Kılavuzu
 
+
+📖 [Kullanım Kılavuzuna Git](#askql-kullanım-kılavuzu)
+
+...
+...
+...
+
+## AskQL Kullanım Kılavuzu
+
+📄 [PDF olarak indir](./AskQL%20Kullanim%20Kilavuzu.pdf)
