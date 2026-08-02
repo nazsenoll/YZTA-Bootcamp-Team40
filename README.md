@@ -354,22 +354,21 @@ Ekip içi iletişim; Notion üzerinde yürütülen görev kartları, Google Meet
 
 
 ### Done (17)
+- Backend sistem çalışmaları
+- Raporlar paneli — geçmiş sorguların listelenmesi
+- Sorgu sonuçlarının PDF ve CSV olarak dışa aktarılması
+- Uygulamanın Railway üzerinde canlıya alınması
+- Şirket kaydı özelliğinin eklenmesi
+- Üç kademeli unvan sistemiyle (Çalışan / Müdür / Yönetici) çalışan ekleme
+- Yetkilendirme modelinin, sunucu tarafında okunan şirket unvanına dayanan modele taşınması
 - Mevcut kod tabanının (frontend mimarisi, UI, UX, erişilebilirlik) uçtan uca gözden geçirilmesi
-- Form etiketlerinin (`label`) input'lara `for`/`id` ile programatik bağlanması
-- Hata mesajları ve dinamik içerik için `aria-live`/`role="alert"` eklenmesi
-- Kontrast oranı ölçülüp WCAG AA eşiğinin altında kalan hata renginin düzeltilmesi
-- Ürün isminin kesinleşmesi (AskQL), logonun şeffaf arka planlı hale getirilip favicon dahil arayüze entegre edilmesi ve marka kimliğine uygun, responsive giriş ekranı tasarımı
 - Uygulama seviyesinde kimlik doğrulama sisteminin eklenmesi (kayıt, giriş, çıkış, beni hatırla)
 - Yerel kullanıcı deposundan Supabase'e geçiş
 - E-posta ile gönderilen şifre üzerinden sisteme giriş desteklenmesi
 - Giriş/kayıt ve veritabanı bağlantı adımlarının birbirinden ayrıştırılması
-- Şirket kaydı özelliğinin eklenmesi
-- Üç kademeli unvan sistemiyle (Çalışan / Müdür / Yönetici) çalışan ekleme
-- Yetkilendirme modelinin, sunucu tarafında okunan şirket unvanına dayanan modele taşınması
-- Uygulamanın Railway üzerinde canlıya alınması
-- Sorgu sonuçlarının PDF ve CSV olarak dışa aktarılması
-- Raporlar paneli — geçmiş sorguların listelenmesi
-- Backend sistem çalışmaları
+- Hata mesajları ve dinamik içerik için `aria-live`/`role="alert"` eklenmesi
+- Kontrast oranı ölçülüp WCAG AA eşiğinin altında kalan hata renginin düzeltilmesi
+- Ürün isminin kesinleşmesi (AskQL), logonun şeffaf arka planlı hale getirilip favicon dahil arayüze entegre edilmesi ve marka kimliğine uygun, responsive giriş ekranı tasarımı
 - Kullanıcı deneyimi iyileştirmesi
 
 ### In Progress (0)
