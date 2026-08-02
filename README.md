@@ -291,7 +291,7 @@ Sprint 2 sonunda uçtan uca çalışan hale getirilen uygulama, Sprint 3'te kiml
 | LLM orkestrasyonu | LangChain |
 | LLM | OpenAI gpt-4o-mini (JSON mode) |
 | Veritabanı (iş verisi) | Microsoft SQL Server (pyodbc) |
-| Kullanıcı / şirket verisi | Supabase (PostgreSQL + Auth) |
+| Kullanıcı / şirket verisi | Supabase |
 | Yayına alma | Railway |
 | Görselleştirme | matplotlib |
 | Arayüz | HTML / CSS / Vanilla JavaScript |
