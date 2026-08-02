@@ -73,9 +73,14 @@ verilen veritabani semasina gore T-SQL sorgusuna cevirirsin.
 
 Kurallar:
 - Sadece verilen tablo ve kolon isimlerini kullan, uydurma.
-- Kullanici rolu "analist" ise SADECE SELECT sorgusu uret. Baska bir sey istese bile
+- Kullanici rolu "calisan" ise SADECE SELECT sorgusu uret. Baska bir sey istese bile
   SELECT disinda bir sorgu uretme, bunun yerine "izin_yok" olarak isaretle.
-- Kullanici rolu "yonetici" ise SELECT, DELETE, UPDATE, INSERT uretebilirsin.
+- Kullanici rolu "mudur" ise SELECT, INSERT, UPDATE, DELETE uretebilirsin. Ancak
+  CREATE, ALTER, DROP, TRUNCATE gibi TABLO YAPISINI degistiren islemler uretme --
+  bunlar sadece "yonetici" rolune aciktir; mudur boyle bir sey isterse "izin_yok"
+  olarak isaretle.
+- Kullanici rolu "yonetici" ise SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER,
+  DROP, TRUNCATE uretebilirsin (tablo ekleme/kaldirma dahil, tüm işlemler serbest).
 - WHERE kosulu olmadan DELETE/UPDATE uretme (tum tabloyu etkileyecek sorgulardan kacin),
   eger kullanici gercekten tum satirlari hedefliyorsa bunu "uyari" alaninda belirt.
 - Cok satir donebilecek SELECT sorgularina TOP 200 ekle.
@@ -136,11 +141,12 @@ Bu hatayi dikkate alarak sorguyu duzelt.
     return result.model_dump()
 
 
-def generate_sql_with_retry(question: str, schema_text: str, role: str,
+def generate_sql_with_retry(question: str, schema_text: str, role: str, company_id,
                              history: Optional[list] = None, max_attempts: int = 3) -> dict:
     """Sinirli kendi-kendini-duzeltme donguesu. SQL calistirma ve rol bazli guvenlik
     kontrolu HER ZAMAN burada, bizim kodumuzda yapilir -- LLM bu kontrolleri hicbir
-    zaman atlayamaz.
+    zaman atlayamaz. company_id, hangi sirketin baglantisi uzerinden calistirilacagini
+    belirler (bkz. db.py -- baglantilar artik sirket bazli tutuluyor).
 
     Donen dict alanlari:
       - her zaman: sql, query_type, aciklama, uyari, ok, error
@@ -158,10 +164,13 @@ def generate_sql_with_retry(question: str, schema_text: str, role: str,
     if query_type == "eksik_bilgi":
         return {**sql_result, "ok": False, "error": "eksik_bilgi"}
 
-    actual_type = db.classify_query(sql)
+    actual_type = db.classify_query(sql)  # 'select' | 'dml' | 'ddl'
 
-    if role == "analist" and actual_type != "select":
+    if role == "calisan" and actual_type != "select":
         return {**sql_result, "ok": False, "error": "rol_yetkisiz"}
+    if role == "mudur" and actual_type == "ddl":
+        return {**sql_result, "ok": False, "error": "rol_yetkisiz"}
+    # role == "yonetici": select/dml/ddl hepsine izinli
 
     if actual_type != "select":
         return {**sql_result, "sql": sql, "ok": True, "error": None}
@@ -169,8 +178,9 @@ def generate_sql_with_retry(question: str, schema_text: str, role: str,
     last_error = None
     for attempt in range(max_attempts):
         try:
-            columns, rows = db.run_select(sql)
-            return {**sql_result, "sql": sql, "ok": True, "error": None, "columns": columns, "rows": rows}
+            columns, rows, truncated = db.run_select(company_id, sql)
+            return {**sql_result, "sql": sql, "ok": True, "error": None,
+                     "columns": columns, "rows": rows, "truncated": truncated}
         except db.DBError as e:
             last_error = str(e)
             if attempt == max_attempts - 1:
@@ -183,12 +193,11 @@ def generate_sql_with_retry(question: str, schema_text: str, role: str,
     return {**sql_result, "sql": sql, "ok": False, "error": last_error}
 
 
-def execute_write_with_retry(question: str, schema_text: str, sql: str,
+def execute_write_with_retry(question: str, schema_text: str, sql: str, company_id,
                               max_attempts: int = 3) -> dict:
-    """Onaylanmis bir write (INSERT/UPDATE/DELETE) sorgusunu calistirir; DB hatasi
-    alirsa sinirli sayida fix_sql ile duzeltip tekrar dener. Rol kontrolu (sadece
-    yonetici onaylayabilir) BU FONKSIYONDAN ONCE, cagiran tarafta (app.py) yapilmis
-    olmali -- burada sadece calistirma + duzeltme donguesu var.
+    """Onaylanmis bir yazma (dml/ddl) sorgusunu calistirir; DB hatasi alirsa
+    sinirli sayida fix_sql ile duzeltip tekrar dener. Rol kontrolu BU
+    FONKSIYONDAN ONCE, cagiran tarafta (app.py) yapilmis olmali.
 
     Donen dict: {"ok": bool, "sql": son_denenen_sql, "affected_rows": int|None, "error": str|None}
     """
@@ -196,7 +205,7 @@ def execute_write_with_retry(question: str, schema_text: str, sql: str,
     current_sql = sql
     for attempt in range(max_attempts):
         try:
-            affected = db.run_write(current_sql)
+            affected = db.run_write(company_id, current_sql)
             return {"ok": True, "sql": current_sql, "affected_rows": affected, "error": None}
         except db.DBError as e:
             last_error = str(e)
@@ -204,7 +213,7 @@ def execute_write_with_retry(question: str, schema_text: str, sql: str,
                 break
             fixed = fix_sql(question, schema_text, "yonetici", current_sql, last_error)
             candidate = fixed.get("sql", current_sql)
-            if db.classify_query(candidate) != "write":
+            if db.classify_query(candidate) not in ("dml", "ddl"):
                 break
             current_sql = candidate
 

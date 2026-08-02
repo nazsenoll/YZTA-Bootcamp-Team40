@@ -1,19 +1,15 @@
 const state = {
   authenticated: false,
   connected: false,
-  role: null,
-  reports: [],
 };
 
 const els = {
   authGate: document.getElementById("auth-gate"),
   dbGate: document.getElementById("db-gate"),
-  waitingGate: document.getElementById("waiting-gate"),
   appRoot: document.getElementById("app"),
   loginForm: document.getElementById("login-form"),
   registerForm: document.getElementById("register-form"),
   verifyForm: document.getElementById("verify-form"),
-  changePasswordForm: document.getElementById("change-password-form"),
   linkToRegister: document.getElementById("link-to-register"),
   linkToLogin: document.getElementById("link-to-login"),
   linkResendCode: document.getElementById("link-resend-code"),
@@ -24,8 +20,6 @@ const els = {
   btnVerify: document.getElementById("btn-verify"),
   verifyError: document.getElementById("verify-error"),
   verifyEmailLabel: document.getElementById("verify-email-label"),
-  btnChangePassword: document.getElementById("btn-change-password"),
-  changePasswordError: document.getElementById("change-password-error"),
   btnConnect: document.getElementById("btn-connect"),
   btnDisconnect: document.getElementById("btn-disconnect"),
   btnLogout: document.getElementById("btn-logout"),
@@ -33,43 +27,14 @@ const els = {
   statusServer: document.getElementById("status-server"),
   statusDb: document.getElementById("status-db"),
   roleBadge: document.getElementById("role-badge"),
-  brandTitle: document.getElementById("brand-title"),
-  brandSub: document.getElementById("brand-sub"),
-  themeToggle: document.getElementById("theme-toggle"),
   thread: document.getElementById("thread"),
   emptyState: document.getElementById("empty-state"),
   composer: document.getElementById("composer"),
   inQuestion: document.getElementById("in-question"),
   btnAsk: document.getElementById("btn-ask"),
-  btnReports: document.getElementById("btn-reports"),
-  btnCloseReports: document.getElementById("btn-close-reports"),
-  reportsOverlay: document.getElementById("reports-overlay"),
-  reportsList: document.getElementById("reports-list"),
-  reportsEmptyHint: document.getElementById("reports-empty-hint"),
-  btnEmployees: document.getElementById("btn-employees"),
-  btnCloseEmployees: document.getElementById("btn-close-employees"),
-  employeesOverlay: document.getElementById("employees-overlay"),
-  employeesList: document.getElementById("employees-list"),
-  employeesEmptyHint: document.getElementById("employees-empty-hint"),
-  btnAddEmployee: document.getElementById("btn-add-employee"),
-  addEmployeeError: document.getElementById("add-employee-error"),
 };
 
-// ---------- Tema (koyu/açık) ----------
-
-function applyTheme(theme) {
-  document.documentElement.setAttribute("data-theme", theme);
-  const icon = els.themeToggle.querySelector(".theme-toggle-icon");
-  if (icon) icon.textContent = theme === "light" ? "☀️" : "🌙";
-  localStorage.setItem("askql-theme", theme);
-}
-els.themeToggle.addEventListener("click", () => {
-  const current = document.documentElement.getAttribute("data-theme") || "dark";
-  applyTheme(current === "light" ? "dark" : "light");
-});
-applyTheme(localStorage.getItem("askql-theme") || "dark");
-
-// ---------- Giris / Kayit / Dogrulama / Sifre degistirme ekranlari arasi gecis ----------
+// ---------- Giris / Kayit / Dogrulama ekranlari arasi gecis ----------
 
 let pendingVerifyEmail = "";
 
@@ -77,11 +42,9 @@ function switchAuthMode(mode) {
   els.loginForm.classList.toggle("hidden", mode !== "login");
   els.registerForm.classList.toggle("hidden", mode !== "register");
   els.verifyForm.classList.toggle("hidden", mode !== "verify");
-  els.changePasswordForm.classList.toggle("hidden", mode !== "change-password");
   els.loginError.textContent = "";
   els.registerError.textContent = "";
   els.verifyError.textContent = "";
-  els.changePasswordError.textContent = "";
 }
 
 function goToVerifyScreen(email) {
@@ -137,7 +100,7 @@ els.btnLogin.addEventListener("click", async () => {
       return;
     }
 
-    afterAuthenticated(data.must_change_password);
+    setAuthenticated();
   } catch (e) {
     els.loginError.textContent = "Sunucuya ulaşılamadı.";
   } finally {
@@ -146,12 +109,11 @@ els.btnLogin.addEventListener("click", async () => {
   }
 });
 
-// ---------- Sirket Kaydi (sirket adi + email + sifre) ----------
+// ---------- Kayit (email + sifre + sifre tekrar) ----------
 
 els.btnRegister.addEventListener("click", async () => {
   const email = document.getElementById("reg-email").value.trim();
   const payload = {
-    company: document.getElementById("reg-company").value,
     email,
     password: document.getElementById("reg-password").value,
     password_confirm: document.getElementById("reg-password-confirm").value,
@@ -172,6 +134,8 @@ els.btnRegister.addEventListener("click", async () => {
     if (!data.ok) {
       els.registerError.textContent = data.error || "Kayıt oluşturulamadı.";
       if (data.needs_verification) {
+        // Mail gonderimi basarisiz olsa bile kayit DB'de olustu; kullanici
+        // "tekrar gonder" ile deneyebilsin diye dogrulama ekranina gecir.
         goToVerifyScreen(email.toLowerCase());
       }
       return;
@@ -182,7 +146,7 @@ els.btnRegister.addEventListener("click", async () => {
     els.registerError.textContent = "Sunucuya ulaşılamadı.";
   } finally {
     els.btnRegister.disabled = false;
-    els.btnRegister.textContent = "Şirket Kaydı Oluştur";
+    els.btnRegister.textContent = "Kayıt Ol";
   }
 });
 
@@ -208,7 +172,7 @@ els.btnVerify.addEventListener("click", async () => {
       return;
     }
 
-    afterAuthenticated(data.must_change_password);
+    setAuthenticated();
   } catch (e) {
     els.verifyError.textContent = "Sunucuya ulaşılamadı.";
   } finally {
@@ -243,90 +207,37 @@ els.linkResendCode.addEventListener("click", async (e) => {
   }
 });
 
-// ---------- Zorunlu sifre degistirme (yonetici tarafindan eklenen calisanlar) ----------
-
-els.btnChangePassword.addEventListener("click", async () => {
-  const payload = {
-    current_password: document.getElementById("cp-current").value,
-    new_password: document.getElementById("cp-new").value,
-    new_password_confirm: document.getElementById("cp-new-confirm").value,
-  };
-
-  els.changePasswordError.textContent = "";
-  els.btnChangePassword.disabled = true;
-  els.btnChangePassword.textContent = "Değiştiriliyor...";
-
-  try {
-    const res = await fetch("/api/change_password", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    const data = await res.json();
-
-    if (!data.ok) {
-      els.changePasswordError.textContent = data.error || "Şifre değiştirilemedi.";
-      return;
-    }
-
-    document.getElementById("cp-current").value = "";
-    document.getElementById("cp-new").value = "";
-    document.getElementById("cp-new-confirm").value = "";
-    proceedPastAuth();
-  } catch (e) {
-    els.changePasswordError.textContent = "Sunucuya ulaşılamadı.";
-  } finally {
-    els.btnChangePassword.disabled = false;
-    els.btnChangePassword.textContent = "Şifreyi Değiştir ve Devam Et";
-  }
-});
-
-// ---------- Cikis ----------
-
-async function doLogout() {
+els.btnLogout.addEventListener("click", async () => {
   await fetch("/api/logout", { method: "POST" });
   setLoggedOut();
-}
-els.btnLogout.addEventListener("click", doLogout);
-document.getElementById("btn-switch-account").addEventListener("click", doLogout);
-document.getElementById("btn-switch-account-2").addEventListener("click", doLogout);
+});
 
-function afterAuthenticated(mustChangePassword) {
+document.getElementById("btn-switch-account").addEventListener("click", async () => {
+  await fetch("/api/logout", { method: "POST" });
+  setLoggedOut();
+});
+
+function setAuthenticated() {
   state.authenticated = true;
+  els.authGate.classList.add("hidden");
+  els.dbGate.classList.remove("hidden");
   document.getElementById("in-app-password").value = "";
   document.getElementById("reg-password").value = "";
   document.getElementById("reg-password-confirm").value = "";
-
-  if (mustChangePassword) {
-    els.authGate.classList.remove("hidden");
-    els.dbGate.classList.add("hidden");
-    switchAuthMode("change-password");
-    return;
-  }
-  proceedPastAuth();
-}
-
-async function proceedPastAuth() {
-  els.authGate.classList.add("hidden");
-  await tryAutoConnect();
 }
 
 function setLoggedOut() {
   state.authenticated = false;
   state.connected = false;
-  state.role = null;
-  state.reports = [];
-  renderReportsList();
   els.appRoot.classList.add("hidden");
   els.dbGate.classList.add("hidden");
-  els.waitingGate.classList.add("hidden");
   els.authGate.classList.remove("hidden");
   switchAuthMode("login");
   document.getElementById("in-app-password").value = "";
   document.getElementById("in-password").value = "";
 }
 
-// ---------- Baglanti (sadece yonetici kurar/gunceller) ----------
+// ---------- Baglanti ----------
 
 els.btnConnect.addEventListener("click", async () => {
   const payload = {
@@ -367,53 +278,16 @@ els.btnDisconnect.addEventListener("click", async () => {
   setDisconnected();
 });
 
-async function tryAutoConnect() {
-  try {
-    const res = await fetch("/api/auto_connect", { method: "POST" });
-    const data = await res.json();
-    if (data.ok) {
-      setConnected(data.info);
-      return;
-    }
-    if (data.error === "no_connection") {
-      if (data.needs_setup) {
-        els.dbGate.classList.remove("hidden");
-      } else {
-        els.waitingGate.classList.remove("hidden");
-      }
-      return;
-    }
-    els.waitingGate.classList.remove("hidden");
-  } catch (e) {
-    els.waitingGate.classList.remove("hidden");
-  }
-}
-
 function setConnected(info) {
   state.connected = true;
-  state.role = info.role;
   els.dbGate.classList.add("hidden");
-  els.waitingGate.classList.add("hidden");
   els.appRoot.classList.remove("hidden");
   els.statusServer.textContent = info.server;
-  els.statusDb.textContent = info.database + (info.table_count !== undefined ? " · " + info.table_count + " tablo" : "");
+  els.statusDb.textContent = info.database + " · " + info.table_count + " tablo";
   renderRoleBadge(info.role);
-  els.btnDisconnect.classList.toggle("hidden", info.role !== "yonetici");
-  els.btnEmployees.classList.toggle("hidden", info.role !== "yonetici");
-  if (info.company) {
-    els.brandTitle.textContent = info.company;
-    els.brandSub.textContent = "AskQL · SQL AI Analyst";
-    document.title = info.company + " · AskQL";
-  }
   els.inQuestion.disabled = false;
   els.btnAsk.disabled = false;
 }
-
-const ROLE_LABELS = {
-  yonetici: "Yönetici · tam yetkili",
-  mudur: "Müdür · yazma izinli",
-  calisan: "Çalışan · sadece okuma",
-};
 
 function renderRoleBadge(role) {
   if (!role) {
@@ -421,22 +295,17 @@ function renderRoleBadge(role) {
     els.roleBadge.className = "role-badge";
     return;
   }
-  els.roleBadge.textContent = ROLE_LABELS[role] || role;
+  els.roleBadge.textContent = role === "yonetici" ? "Yönetici · yazma izinli" : "Analist · sadece SELECT";
   els.roleBadge.className = "role-badge role-badge-" + role;
 }
 
 function setDisconnected() {
   state.connected = false;
-  state.reports = [];
-  renderReportsList();
   els.appRoot.classList.add("hidden");
   els.dbGate.classList.remove("hidden");
   els.inQuestion.disabled = true;
   els.btnAsk.disabled = true;
   document.getElementById("in-password").value = "";
-  els.brandTitle.textContent = "SQL AI Analyst";
-  els.brandSub.textContent = "AskQL";
-  document.title = "SQL AI Analyst";
 }
 
 // ---------- Soru sorma ----------
@@ -468,7 +337,7 @@ els.composer.addEventListener("submit", async (e) => {
     }
 
     if (data.type === "select") {
-      addAnswerMessage(data, question);
+      addAnswerMessage(data);
     } else if (data.type === "write") {
       addConfirmMessage(data, question);
     }
@@ -501,7 +370,7 @@ function addThinkingMessage() {
   return div;
 }
 
-function addAnswerMessage(data, question) {
+function addAnswerMessage(data) {
   const tpl = document.getElementById("tpl-message-answer");
   const node = tpl.content.cloneNode(true);
 
@@ -535,58 +404,8 @@ function addAnswerMessage(data, question) {
 
   node.querySelector(".yorum-block").textContent = data.yorum;
 
-  bindExportButtons(node, question, data.columns, data.rows);
-
   els.thread.appendChild(node);
   scrollToBottom();
-
-  if (data.rows && data.rows.length) {
-    state.reports.unshift({
-      question,
-      sql: data.sql,
-      columns: data.columns,
-      rows: data.rows,
-      row_count: data.row_count,
-      timestamp: new Date(),
-    });
-    renderReportsList();
-  }
-}
-
-function bindExportButtons(node, title, columns, rows) {
-  node.querySelectorAll(".btn-export").forEach((btn) => {
-    btn.addEventListener("click", () => exportData(columns, rows, btn.dataset.format, title, btn));
-  });
-}
-
-async function exportData(columns, rows, format, title, triggerBtn) {
-  if (!columns || !columns.length) return;
-  if (triggerBtn) triggerBtn.disabled = true;
-  try {
-    const res = await fetch("/api/export", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ columns, rows, format, title }),
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      alert(err.error || "Dışa aktarma başarısız oldu.");
-      return;
-    }
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `rapor.${format === "pdf" ? "pdf" : "csv"}`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-  } catch (e) {
-    alert("Sunucuya ulaşılamadı.");
-  } finally {
-    if (triggerBtn) triggerBtn.disabled = false;
-  }
 }
 
 function addConfirmMessage(data, question) {
@@ -614,7 +433,7 @@ function addConfirmMessage(data, question) {
       const res = await fetch("/api/execute", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sql: data.sql, question }),
+        body: JSON.stringify({ sql: data.sql }),
       });
       const result = await res.json();
       const actions = wrapper.querySelector(".confirm-actions");
@@ -678,113 +497,6 @@ function scrollToBottom() {
   els.thread.scrollTop = els.thread.scrollHeight;
 }
 
-// ---------- Raporlar paneli ----------
-
-els.btnReports.addEventListener("click", () => {
-  els.reportsOverlay.classList.remove("hidden");
-});
-els.btnCloseReports.addEventListener("click", () => {
-  els.reportsOverlay.classList.add("hidden");
-});
-els.reportsOverlay.addEventListener("click", (e) => {
-  if (e.target === els.reportsOverlay) els.reportsOverlay.classList.add("hidden");
-});
-
-function renderReportsList() {
-  els.reportsEmptyHint.classList.toggle("hidden", state.reports.length > 0);
-  els.reportsList.innerHTML = "";
-  state.reports.forEach((rep) => {
-    const tpl = document.getElementById("tpl-report-item");
-    const node = tpl.content.cloneNode(true);
-    node.querySelector(".report-item-question").textContent = rep.question;
-    const timeStr = rep.timestamp.toLocaleString("tr-TR");
-    node.querySelector(".report-item-meta").textContent = `${timeStr} · ${rep.row_count} satır`;
-    bindExportButtons(node, rep.question, rep.columns, rep.rows);
-    els.reportsList.appendChild(node);
-  });
-}
-
-// ---------- Calisanlar paneli (sadece yonetici) ----------
-
-els.btnEmployees.addEventListener("click", async () => {
-  els.employeesOverlay.classList.remove("hidden");
-  await loadEmployees();
-});
-els.btnCloseEmployees.addEventListener("click", () => {
-  els.employeesOverlay.classList.add("hidden");
-});
-els.employeesOverlay.addEventListener("click", (e) => {
-  if (e.target === els.employeesOverlay) els.employeesOverlay.classList.add("hidden");
-});
-
-const EMPLOYEE_TITLE_LABELS = {
-  yonetici: "Yönetici",
-  mudur: "Müdür",
-  calisan: "Çalışan",
-};
-
-async function loadEmployees() {
-  try {
-    const res = await fetch("/api/employees");
-    const data = await res.json();
-    if (!data.ok) return;
-    renderEmployeesList(data.employees || []);
-  } catch (e) {
-    // sessiz gec
-  }
-}
-
-function renderEmployeesList(employees) {
-  els.employeesEmptyHint.classList.toggle("hidden", employees.length > 0);
-  els.employeesList.innerHTML = "";
-  employees.forEach((emp) => {
-    const tpl = document.getElementById("tpl-employee-item");
-    const node = tpl.content.cloneNode(true);
-    node.querySelector(".employee-email").textContent = emp.email;
-    const titleLabel = EMPLOYEE_TITLE_LABELS[emp.title] || emp.title;
-    const statusLabel = emp.must_change_password ? "İlk giriş bekleniyor" : "Aktif";
-    node.querySelector(".employee-meta").textContent = `${titleLabel} · ${statusLabel}`;
-    els.employeesList.appendChild(node);
-  });
-}
-
-els.btnAddEmployee.addEventListener("click", async () => {
-  const email = document.getElementById("emp-email").value.trim();
-  const title = document.getElementById("emp-title").value;
-
-  els.addEmployeeError.textContent = "";
-  els.btnAddEmployee.disabled = true;
-  els.btnAddEmployee.textContent = "Ekleniyor...";
-
-  try {
-    const res = await fetch("/api/add_employee", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, title }),
-    });
-    const data = await res.json();
-
-    if (!data.ok) {
-      els.addEmployeeError.textContent = data.error || "Çalışan eklenemedi.";
-      return;
-    }
-    if (data.warning) {
-      els.addEmployeeError.style.color = "var(--amber)";
-      els.addEmployeeError.textContent = data.warning;
-    } else {
-      els.addEmployeeError.style.color = "";
-      els.addEmployeeError.textContent = "";
-    }
-    document.getElementById("emp-email").value = "";
-    await loadEmployees();
-  } catch (e) {
-    els.addEmployeeError.textContent = "Sunucuya ulaşılamadı.";
-  } finally {
-    els.btnAddEmployee.disabled = false;
-    els.btnAddEmployee.textContent = "Çalışan Ekle";
-  }
-});
-
 // ---------- Sayfa yuklenince once giris, sonra baglanti durumunu kontrol et ----------
 
 (async function checkStatus() {
@@ -794,16 +506,18 @@ els.btnAddEmployee.addEventListener("click", async () => {
     if (!authData.authenticated) {
       return; // varsayilan gorunum zaten login-gate
     }
-    state.authenticated = true;
+    setAuthenticated();
 
-    if (authData.must_change_password) {
-      els.authGate.classList.remove("hidden");
-      switchAuthMode("change-password");
-      return;
+    const dbRes = await fetch("/api/status");
+    const dbData = await dbRes.json();
+    if (dbData.connected) {
+      setConnected({
+        server: dbData.info.server,
+        database: dbData.info.database,
+        table_count: "?",
+        role: dbData.info.role,
+      });
     }
-
-    els.authGate.classList.add("hidden");
-    await tryAutoConnect();
   } catch (e) {
     // sessiz gec
   }

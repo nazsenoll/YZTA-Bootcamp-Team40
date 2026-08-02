@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SQL AI Analyst</title>
-<link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo-mark.png') }}">
+<link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
@@ -20,7 +20,7 @@
 
   <div class="gate-hero">
     <div class="hero-brand-row">
-      <div class="logo-chip logo-chip-md"><img src="{{ url_for('static', filename='img/logo-mark.png') }}" alt="AskQL"></div>
+      <div class="logo-chip logo-chip-md"><img src="{{ url_for('static', filename='img/logo.png') }}" alt="AskQL"></div>
       <div>
         <div class="hero-brand-name">AskQL</div>
         <div class="hero-brand-sub">SQL AI Analyst</div>
@@ -68,8 +68,8 @@
       <div class="hero-feature">
         <span class="hero-feature-icon">◆</span>
         <div>
-          <div class="hero-feature-title">Rol Bazlı Güvenlik</div>
-          <div class="hero-feature-desc">Yetki, bağlandığınız girişin izninden gelir.</div>
+          <div class="hero-feature-title">Unvan Bazlı Güvenlik</div>
+          <div class="hero-feature-desc">Yetki, yöneticinin sana verdiği unvandan gelir.</div>
         </div>
       </div>
       <div class="hero-feature">
@@ -97,7 +97,7 @@
   <div class="gate-card-col">
     <div class="gate-card">
       <div class="gate-brand-center">
-        <div class="logo-chip logo-chip-lg"><img src="{{ url_for('static', filename='img/logo-mark.png') }}" alt="AskQL"></div>
+        <div class="logo-chip logo-chip-lg"><img src="{{ url_for('static', filename='img/logo.png') }}" alt="AskQL"></div>
       </div>
 
       <div id="login-form">
@@ -132,12 +132,17 @@
         <button class="gate-submit" id="btn-login"><span>Giriş Yap →</span></button>
         <div class="hint-error" id="login-error"></div>
 
-        <p class="gate-switch-line">Hesabınız yok mu? <a href="#" id="link-to-register">Kayıt Ol</a></p>
+        <p class="gate-switch-line">Şirketiniz kayıtlı değil mi? <a href="#" id="link-to-register">Şirket Kaydı Oluştur</a></p>
       </div>
 
       <div id="register-form" class="hidden">
-        <h2 class="gate-card-title-center">Hesap Oluştur</h2>
-        <p class="gate-card-sub">Yeni bir hesap oluştur, hemen kullanmaya başla.</p>
+        <h2 class="gate-card-title-center">Şirket Kaydı Oluştur</h2>
+        <p class="gate-card-sub">Bu kaydı yapan kişi otomatik olarak "Yönetici" unvanını alır. E-postana gelecek kod ile hesabını doğrulayacaksın.</p>
+
+        <div class="float-field">
+          <input type="text" id="reg-company" class="gate-input" placeholder=" " autocomplete="organization">
+          <label for="reg-company">Şirket Adı</label>
+        </div>
 
         <div class="icon-field">
           <span class="icon-field-icon">✉</span>
@@ -164,10 +169,47 @@
           </div>
         </div>
 
-        <button class="gate-submit" id="btn-register"><span>Kayıt Ol</span></button>
+        <button class="gate-submit" id="btn-register"><span>Şirket Kaydı Oluştur</span></button>
         <div class="hint-error" id="register-error"></div>
 
         <p class="gate-switch-line">Zaten hesabınız var mı? <a href="#" id="link-to-login">Giriş Yap</a></p>
+      </div>
+
+      <div id="verify-form" class="hidden">
+        <h2 class="gate-card-title-center">E-postanı Doğrula</h2>
+        <p class="gate-card-sub"><span id="verify-email-label"></span> adresine gönderilen 6 haneli kodu gir.</p>
+
+        <div class="float-field">
+          <input type="text" id="verify-code" class="gate-input" placeholder=" " autocomplete="one-time-code" inputmode="numeric" maxlength="6">
+          <label for="verify-code">Doğrulama Kodu</label>
+        </div>
+
+        <button class="gate-submit" id="btn-verify"><span>Doğrula</span></button>
+        <div class="hint-error" id="verify-error"></div>
+
+        <p class="gate-switch-line">Kod gelmedi mi? <a href="#" id="link-resend-code">Tekrar gönder</a></p>
+      </div>
+
+      <div id="change-password-form" class="hidden">
+        <h2 class="gate-card-title-center">Şifreni Değiştir</h2>
+        <p class="gate-card-sub">Hesabın geçici bir şifreyle oluşturuldu. Devam etmeden önce kendi şifreni belirlemen gerekiyor.</p>
+
+        <div class="float-field">
+          <input type="password" id="cp-current" class="gate-input" placeholder=" " autocomplete="current-password">
+          <label for="cp-current">Geçici Şifre</label>
+        </div>
+        <div class="float-field">
+          <input type="password" id="cp-new" class="gate-input" placeholder=" " autocomplete="new-password">
+          <label for="cp-new">Yeni Şifre</label>
+        </div>
+        <div class="gate-hint">en az 6 karakter</div>
+        <div class="float-field">
+          <input type="password" id="cp-new-confirm" class="gate-input" placeholder=" " autocomplete="new-password">
+          <label for="cp-new-confirm">Yeni Şifre (tekrar)</label>
+        </div>
+
+        <button class="gate-submit" id="btn-change-password"><span>Şifreyi Değiştir ve Devam Et</span></button>
+        <div class="hint-error" id="change-password-error"></div>
       </div>
     </div>
   </div>
@@ -182,11 +224,11 @@
 
   <div class="gate-card">
     <div class="gate-brand-center">
-      <div class="logo-chip logo-chip-md"><img src="{{ url_for('static', filename='img/logo-mark.png') }}" alt="AskQL"></div>
+      <div class="logo-chip logo-chip-md"><img src="{{ url_for('static', filename='img/logo.png') }}" alt="AskQL"></div>
       <span class="gate-brand-name">AskQL</span>
     </div>
     <h1 class="gate-card-title-center">Veritabanı Bağlantısı</h1>
-    <p class="gate-card-sub">Sorularını çalıştırabilmemiz için SQL Server bilgilerini gir.</p>
+    <p class="gate-card-sub">Sorularını çalıştırabilmemiz için SQL Server bilgilerini gir. Bu bilgi tüm şirketin ortak bağlantısı olarak kaydedilir.</p>
 
     <div class="float-field">
       <input type="text" id="in-server" class="gate-input" placeholder=" " autocomplete="off">
@@ -212,8 +254,25 @@
 
     <button class="gate-submit" id="btn-connect"><span>Bağlan</span></button>
     <div class="hint-error" id="connect-error"></div>
-    <p class="gate-footnote">Bilgiler yalnızca bu oturumda tutulur, hiçbir yerde saklanmaz.</p>
+    <p class="gate-footnote">Bilgiler sunucuda şirketinize özel saklanır, çalışanların tekrar girmesi gerekmez.</p>
     <button type="button" class="gate-switch-account" id="btn-switch-account">Farklı hesapla giriş yap</button>
+  </div>
+</div>
+
+<div class="gate hidden" id="waiting-gate">
+  <div class="gate-bg" aria-hidden="true">
+    <div class="gate-orb gate-orb-1"></div>
+    <div class="gate-orb gate-orb-2"></div>
+    <div class="gate-orb gate-orb-3"></div>
+  </div>
+  <div class="gate-card">
+    <div class="gate-brand-center">
+      <div class="logo-chip logo-chip-md"><img src="{{ url_for('static', filename='img/logo.png') }}" alt="AskQL"></div>
+      <span class="gate-brand-name">AskQL</span>
+    </div>
+    <h1 class="gate-card-title-center">Bağlantı Henüz Kurulmadı</h1>
+    <p class="gate-card-sub">Şirketiniz için veritabanı bağlantısı henüz kurulmamış. Bu işlemi yalnızca yönetici yapabilir, lütfen yöneticinizle iletişime geçin.</p>
+    <button type="button" class="gate-switch-account" id="btn-switch-account-2">Farklı hesapla giriş yap</button>
   </div>
 </div>
 
@@ -221,11 +280,14 @@
 
   <aside class="sidebar">
     <div class="brand">
-      <div class="logo-chip logo-chip-sm"><img src="{{ url_for('static', filename='img/logo-mark.png') }}" alt="AskQL"></div>
+      <div class="logo-chip logo-chip-sm"><img src="{{ url_for('static', filename='img/logo.png') }}" alt="AskQL"></div>
       <div>
-        <div class="brand-title">SQL AI Analyst</div>
-        <div class="brand-sub">soru → sorgu → grafik → yorum</div>
+        <div class="brand-title" id="brand-title">SQL AI Analyst</div>
+        <div class="brand-sub" id="brand-sub">AskQL</div>
       </div>
+      <button class="theme-toggle" id="theme-toggle" title="Tema değiştir" type="button">
+        <span class="theme-toggle-icon">🌙</span>
+      </button>
     </div>
 
     <div class="panel" id="connection-panel">
@@ -238,7 +300,9 @@
         </div>
       </div>
       <div class="role-badge" id="role-badge"></div>
-      <button class="btn-ghost" id="btn-disconnect">Bağlantıyı değiştir</button>
+      <button class="btn-ghost" id="btn-reports">📊 Raporlar</button>
+      <button class="btn-ghost hidden" id="btn-employees">👥 Çalışanlar</button>
+      <button class="btn-ghost hidden" id="btn-disconnect">Bağlantıyı değiştir</button>
       <button class="btn-ghost" id="btn-logout">Çıkış yap</button>
     </div>
 
@@ -256,7 +320,7 @@
   <main class="main">
     <div class="thread" id="thread">
       <div class="empty-state" id="empty-state">
-        <div class="logo-chip logo-chip-md"><img src="{{ url_for('static', filename='img/logo-mark.png') }}" alt="AskQL"></div>
+        <div class="logo-chip logo-chip-md"><img src="{{ url_for('static', filename='img/logo.png') }}" alt="AskQL"></div>
         <p>Bağlantı kurulduktan sonra veritabanına Türkçe soru sorabilirsin.</p>
         <p class="empty-example">"geçen ay en çok satan ürün hangisi?"</p>
       </div>
@@ -285,6 +349,10 @@
     <div class="result-table-wrap"></div>
     <div class="chart-wrap"></div>
     <div class="yorum-block"></div>
+    <div class="export-row">
+      <button class="btn-export" data-format="csv">⬇ CSV indir</button>
+      <button class="btn-export" data-format="pdf">⬇ PDF indir</button>
+    </div>
   </div>
 </template>
 
@@ -306,6 +374,62 @@
 
 <template id="tpl-message-error">
   <div class="msg msg-error"></div>
+</template>
+
+<div class="reports-overlay hidden" id="reports-overlay">
+  <div class="reports-panel">
+    <div class="reports-panel-head">
+      <span>📊 Raporlar</span>
+      <button class="reports-close" id="btn-close-reports">×</button>
+    </div>
+    <p class="reports-empty-hint" id="reports-empty-hint">Henüz bir sorgu sonucu yok. Bir soru sorduğunda burada listelenecek.</p>
+    <div class="reports-list" id="reports-list"></div>
+  </div>
+</div>
+
+<template id="tpl-report-item">
+  <div class="report-item">
+    <div class="report-item-question"></div>
+    <div class="report-item-meta"></div>
+    <div class="export-row">
+      <button class="btn-export" data-format="csv">⬇ CSV indir</button>
+      <button class="btn-export" data-format="pdf">⬇ PDF indir</button>
+    </div>
+  </div>
+</template>
+
+<div class="reports-overlay hidden" id="employees-overlay">
+  <div class="reports-panel">
+    <div class="reports-panel-head">
+      <span>👥 Çalışanlar</span>
+      <button class="reports-close" id="btn-close-employees">×</button>
+    </div>
+    <div class="employee-add-form">
+      <div class="float-field">
+        <input type="email" id="emp-email" class="gate-input" placeholder=" " autocomplete="off">
+        <label for="emp-email">E-posta</label>
+      </div>
+      <div class="float-field">
+        <select id="emp-title" class="gate-input emp-title-select">
+          <option value="calisan">Çalışan · sadece okuma</option>
+          <option value="mudur">Müdür · yazma izinli</option>
+          <option value="yonetici">Yönetici · tam yetkili</option>
+        </select>
+        <label for="emp-title">Unvan</label>
+      </div>
+      <button class="btn-primary" id="btn-add-employee" type="button">Çalışan Ekle</button>
+      <div class="hint-error" id="add-employee-error"></div>
+    </div>
+    <p class="reports-empty-hint" id="employees-empty-hint">Henüz eklenmiş çalışan yok.</p>
+    <div class="reports-list" id="employees-list"></div>
+  </div>
+</div>
+
+<template id="tpl-employee-item">
+  <div class="report-item">
+    <div class="report-item-question employee-email"></div>
+    <div class="report-item-meta employee-meta"></div>
+  </div>
 </template>
 
 <script src="{{ url_for('static', filename='js/app.js') }}"></script>

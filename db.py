@@ -1,20 +1,17 @@
 """
 SQL Server baglanti ve sorgu calistirma islemleri.
-Baglanti bilgisi tek kullanicilik demo icin process-icinde global olarak tutulur.
+
+Uygulama cok kiracili (multi-tenant): birden fazla sirket ayni Flask
+sureci uzerinde calisabiliyor. Bu yuzden baglanti tek bir global degil,
+company_id -> baglanti bilgisi seklinde bir sozlukte tutulur.
 """
 
 import os
 import re
 import pyodbc
 
-# Aktif baglanti bilgisi burada tutulur (tek kullanicili demo icin yeterli)
-_state = {
-    "conn": None,
-    "server": None,
-    "database": None,
-    "schema": None,
-    "role": None,
-}
+# company_id -> {"conn":..., "server":..., "database":..., "schema":...}
+_connections: dict = {}
 
 ODBC_DRIVER = os.environ.get("ODBC_DRIVER", "ODBC Driver 17 for SQL Server")
 
@@ -23,9 +20,8 @@ class DBError(Exception):
     pass
 
 
-def connect(server: str, database: str, username: str, password: str) -> dict:
-    """SQL Server'a kullanici adi/sifre ile baglanir. Onceki baglanti varsa kapatir."""
-    disconnect()
+def connect(company_id, server: str, database: str, username: str, password: str) -> dict:
+    disconnect(company_id)
 
     conn_str = (
         f"DRIVER={{{ODBC_DRIVER}}};"
@@ -41,66 +37,58 @@ def connect(server: str, database: str, username: str, password: str) -> dict:
     except pyodbc.Error as e:
         raise DBError(f"Baglanti kurulamadi: {e}")
 
-    _state["conn"] = conn
-    _state["server"] = server
-    _state["database"] = database
-    _state["schema"] = _read_schema(conn)
-    _state["role"] = _determine_role(conn)
+    try:
+        schema = _read_schema(conn)
+    except pyodbc.Error as e:
+        try:
+            conn.close()
+        except Exception:
+            pass
+        raise DBError(f"Semaya erisilemedi: {e}")
+
+    _connections[company_id] = {
+        "conn": conn,
+        "server": server,
+        "database": database,
+        "schema": schema,
+    }
 
     return {
         "server": server,
         "database": database,
-        "table_count": len(_state["schema"]),
-        "role": _state["role"],
+        "table_count": len(schema),
     }
 
 
-def disconnect():
-    if _state["conn"] is not None:
+def disconnect(company_id):
+    entry = _connections.pop(company_id, None)
+    if entry and entry.get("conn") is not None:
         try:
-            _state["conn"].close()
+            entry["conn"].close()
         except Exception:
             pass
-    _state["conn"] = None
-    _state["server"] = None
-    _state["database"] = None
-    _state["schema"] = None
-    _state["role"] = None
 
 
-def is_connected() -> bool:
-    return _state["conn"] is not None
+def is_connected(company_id) -> bool:
+    return company_id in _connections and _connections[company_id].get("conn") is not None
 
 
-def get_connection_info() -> dict:
-    return {"server": _state["server"], "database": _state["database"], "role": _state["role"]}
-
-
-def _determine_role(conn) -> str:
-    """Baglanan SQL girisinin GERCEK veritabani izinlerine gore rolu belirler.
-    Rol artik arayuzden secilen bir sey degil; hangi sifreyle baglanildiysa
-    o girisin db_owner/db_datawriter uyeligine gore otomatik atanir."""
-    cursor = conn.cursor()
-    try:
-        cursor.execute("SELECT IS_MEMBER('db_owner'), IS_MEMBER('db_datawriter')")
-        is_owner, is_writer = cursor.fetchone()
-        return "yonetici" if (is_owner == 1 or is_writer == 1) else "analist"
-    finally:
-        cursor.close()
-
-
-def get_schema() -> dict:
-    if _state["schema"] is None:
+def get_connection_info(company_id) -> dict:
+    entry = _connections.get(company_id)
+    if not entry:
         raise DBError("Once bir veritabanina baglanmalisin.")
-    return _state["schema"]
+    return {"server": entry["server"], "database": entry["database"]}
 
 
-def get_schema_text() -> str:
-    """LLM promptuna gomulecek okunabilir sema metni.
-    ZORUNLU etiketi: kolon NOT NULL ve varsayilan degeri yoksa -- bu durumda INSERT
-    sirasinda deger MUTLAKA verilmelidir, aksi halde sorgu veritabani hatasiyla basarisiz olur.
-    """
-    schema = get_schema()
+def get_schema(company_id) -> dict:
+    entry = _connections.get(company_id)
+    if not entry:
+        raise DBError("Once bir veritabanina baglanmalisin.")
+    return entry["schema"]
+
+
+def get_schema_text(company_id) -> str:
+    schema = get_schema(company_id)
     lines = []
     for table, columns in schema.items():
         parts = []
@@ -117,7 +105,6 @@ def get_schema_text() -> str:
 
 
 def _read_schema(conn) -> dict:
-    """Bagli veritabanindaki tablo, kolon, nullable ve default bilgilerini okur."""
     cursor = conn.cursor()
     cursor.execute(
         """
@@ -138,57 +125,86 @@ def _read_schema(conn) -> dict:
     return schema
 
 
-# --- Sorgu turu tespiti ------------------------------------------------
+_DML_KEYWORDS = re.compile(r"^\s*(INSERT|UPDATE|DELETE|MERGE)\b", re.IGNORECASE)
+_DDL_KEYWORDS = re.compile(r"^\s*(DROP|TRUNCATE|ALTER|CREATE|EXEC|EXECUTE)\b", re.IGNORECASE)
 
-_WRITE_KEYWORDS = re.compile(
-    r"^\s*(DELETE|UPDATE|INSERT|DROP|TRUNCATE|ALTER|CREATE|EXEC|MERGE)\b",
-    re.IGNORECASE,
-)
+_DML_KEYWORD_ANYWHERE = re.compile(r"\b(INSERT|UPDATE|DELETE|MERGE)\b", re.IGNORECASE)
+_DDL_KEYWORD_ANYWHERE = re.compile(r"\b(DROP|TRUNCATE|ALTER|CREATE|EXEC|EXECUTE)\b", re.IGNORECASE)
+
+_LINE_COMMENT = re.compile(r"--[^\n]*")
+_BLOCK_COMMENT = re.compile(r"/\*.*?\*/", re.DOTALL)
+_MD_FENCE = re.compile(r"```(?:sql)?", re.IGNORECASE)
+
+
+def _normalize_sql(sql: str) -> str:
+    cleaned = _MD_FENCE.sub("", sql)
+    cleaned = _BLOCK_COMMENT.sub(" ", cleaned)
+    cleaned = _LINE_COMMENT.sub(" ", cleaned)
+    return cleaned.strip()
 
 
 def classify_query(sql: str) -> str:
-    """SQL'in 'select' mi yoksa 'write' (DELETE/UPDATE/vb.) mi oldugunu dondurur."""
-    stripped = sql.strip()
-    if _WRITE_KEYWORDS.match(stripped):
-        return "write"
+    cleaned = _normalize_sql(sql)
+
+    statements = [s for s in cleaned.split(";") if s.strip()]
+    if len(statements) > 1:
+        return "ddl"
+
+    if _DDL_KEYWORDS.match(cleaned):
+        return "ddl"
+    if _DML_KEYWORDS.match(cleaned):
+        return "dml"
+
+    if not cleaned.upper().startswith("SELECT"):
+        if _DDL_KEYWORD_ANYWHERE.search(cleaned):
+            return "ddl"
+        if _DML_KEYWORD_ANYWHERE.search(cleaned):
+            return "dml"
+        if not cleaned.upper().startswith("WITH"):
+            return "ddl"
+
     return "select"
 
 
-def run_select(sql: str, max_rows: int = 500):
-    """Sadece SELECT sorgulari icin. Kolon isimlerini ve satirlari dondurur."""
+def run_select(company_id, sql: str, max_rows: int = 500):
     if classify_query(sql) != "select":
         raise DBError("Bu fonksiyon sadece SELECT sorgulari icin kullanilabilir.")
-    if _state["conn"] is None:
+    entry = _connections.get(company_id)
+    if not entry:
         raise DBError("Once bir veritabanina baglanmalisin.")
 
-    cursor = _state["conn"].cursor()
+    cursor = entry["conn"].cursor()
     try:
         cursor.execute(sql)
         columns = [col[0] for col in cursor.description]
-        rows = cursor.fetchmany(max_rows)
+        rows = cursor.fetchmany(max_rows + 1)
         rows = [list(row) for row in rows]
     except pyodbc.Error as e:
         raise DBError(f"Sorgu calistirilamadi: {e}")
     finally:
         cursor.close()
 
-    return columns, rows
+    truncated = len(rows) > max_rows
+    if truncated:
+        rows = rows[:max_rows]
+
+    return columns, rows, truncated
 
 
-def run_write(sql: str) -> int:
-    """DELETE/UPDATE vb. sorgular icin. Sadece kullanici onayindan sonra cagrilmali."""
-    if classify_query(sql) != "write":
+def run_write(company_id, sql: str) -> int:
+    if classify_query(sql) not in ("dml", "ddl"):
         raise DBError("Bu fonksiyon sadece yazma sorgulari icin kullanilabilir.")
-    if _state["conn"] is None:
+    entry = _connections.get(company_id)
+    if not entry:
         raise DBError("Once bir veritabanina baglanmalisin.")
 
-    cursor = _state["conn"].cursor()
+    cursor = entry["conn"].cursor()
     try:
         cursor.execute(sql)
         affected = cursor.rowcount
-        _state["conn"].commit()
+        entry["conn"].commit()
     except pyodbc.Error as e:
-        _state["conn"].rollback()
+        entry["conn"].rollback()
         raise DBError(f"Sorgu calistirilamadi: {e}")
     finally:
         cursor.close()

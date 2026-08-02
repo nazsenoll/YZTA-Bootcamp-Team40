@@ -16,10 +16,16 @@ _COLOR = "#2f6f6f"
 
 
 def _to_floats(rows, idx):
-    try:
-        return [float(row[idx]) for row in rows]
-    except (TypeError, ValueError):
-        return None
+    """rows[idx] kolonunu float listesine cevirir. Onceden tek bir NULL/tip
+    uyumsuz deger tum listeyi None yapip grafigi iptal ediyordu; artik sadece
+    o satirlar atlaniyor, geri kalan veriyle grafik yine cizilebiliyor."""
+    values = []
+    for row in rows:
+        try:
+            values.append(float(row[idx]))
+        except (TypeError, ValueError):
+            continue
+    return values if values else None
 
 
 def build_chart(chart_type: str, columns: list, rows: list, x_column: str, y_column: str, title: str):
