@@ -16,6 +16,8 @@
 ## Ürün İsmi
 **AskQL - SQL AI Analyst** — Doğal dil ile veritabanı sorgulama asistanı
 - Web sitesine ulaşmak için [buraya tıklayabilirsiniz](https://askql.up.railway.app/).
+- [Kullanım kılavuzuna ulaşmak için tıklayın.](./AskQL%20Kullanim%20Kilavuzu.pdf)
+- [Kurulum kılavuzu için tıklayın.](<./AskQL Kurulum Kılavuzu>)
 
 ## Ürün Açıklaması
 Veritabanına bağlanıp Türkçe soru sorarak, SQL bilmeden veri analizi yapmayı
@@ -38,10 +40,6 @@ Türkçe yorum olarak sunar.
 - Veri ekibi olmayan veya veri ekibi yoğun olan şirketler
 - Küçük ve orta ölçekli işletmelerde raporlama ihtiyacı olan yöneticiler
 
-## AskQL Kullanım ve Kurulum Kılavuzu
-
-- [Kullanım kılavuzuna ulaşmak için tıklayın.](./AskQL%20Kullanim%20Kilavuzu.pdf)
-- [Kurulum kılavuzu için tıklayın.](<./AskQL Kurulum Kılavuzu>)
 
 
 ## Sistem Mimarisi
