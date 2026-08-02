@@ -302,35 +302,38 @@ Sprint 2 sonunda uçtan uca çalışan hale getirilen uygulama, Sprint 3'te kiml
 
 ### Modüller
 
-**Kimlik doğrulama (`auth.py` → Supabase)**
-Önce yerel, dosya tabanlı bir kullanıcı deposu (`users.db`, SQLite) ile başlandı; ardından üretime uygun hale getirmek için kimlik doğrulama Supabase'e taşındı. E-posta ile gönderilen şifre üzerinden sisteme giriş desteklendi.
+**Kimlik doğrulama (users_db.py + Brevo + Supabase)
+Kimlik doğrulama katmanı Supabase üzerinde çalışmaktadır. Kullanıcı ve şirket bilgileri Supabase'de tutulurken, hesap oluşturma sırasında gönderilen 6 haneli doğrulama kodu ile e-posta doğrulaması Brevo üzerinden gerçekleştirilmektedir. Hesap doğrulanmadan sisteme giriş yapılamaz. Ayrıca yönetici tarafından eklenen çalışanlara geçici şifre oluşturularak Brevo aracılığıyla e-posta olarak iletilmektedir.
 
-**`app.py` — API katmanı**
-`/api/register`, `/api/login`, `/api/logout`, `/api/auth_status` uç noktaları eklendi; tüm veri/sorgu uç noktaları `login_required` ile korunuyor. "Beni hatırla" ile 30 günlük kalıcı oturum desteklendi.
+**app.py — API Katmanı
+/api/register, /api/verify, /api/resend_code, /api/login, /api/logout, /api/change_password ve diğer API uç noktaları geliştirilmiştir. Kimlik doğrulaması gerektiren tüm işlemler login_required ile korunmaktadır. Ayrıca "Beni Hatırla" seçeneği sayesinde 30 güne kadar kalıcı oturum desteği sunulmaktadır.
 
-**`db.py` — Yetkilendirme**
-Sorgu güvenlik denetimi, unvana dayalı yetkilendirme modeline göre güncellendi (bkz. Güvenlik Yaklaşımı).
+**db.py — Veritabanı ve Yetkilendirme
+SQL Server bağlantısı çok şirketli (multi-tenant) mimariye uygun şekilde yönetilmektedir. Üretilen SQL sorguları çalıştırılmadan önce sunucu tarafında bağımsız olarak sınıflandırılır (SELECT / DML / DDL) ve kullanıcının unvanına göre yetkilendirilir. SELECT ve yazma işlemleri farklı fonksiyonlar üzerinden yürütülmektedir.
 
-**Şirket ve çalışan yönetimi**
-Şirket kaydı eklendi; çalışanlar üç kademeli bir unvan sistemiyle (Çalışan / Müdür / Yönetici) sisteme eklenebiliyor. Yetki, bu unvana göre belirleniyor.
+**Şirket ve çalışan yönetimi
+Sisteme ilk kayıt olan kullanıcı otomatik olarak Yönetici unvanını alır ve şirketini oluşturur. Yönetici daha sonra şirkete Çalışan veya Müdür unvanıyla yeni kullanıcılar ekleyebilir. Yetkilendirme tamamen sunucu tarafında saklanan unvan bilgisine göre yapılmaktadır.
 
-**Dışa aktarma**
-Sorgu sonuçlarının PDF ve CSV olarak dışa aktarılması eklendi.
+**Grafik oluşturma
+Sorgu sonucuna en uygun grafik türü LLM tarafından belirlenmekte; grafik oluşturma işlemi ise ayrı bir modül tarafından gerçekleştirilmektedir. Bar, Line, Pie, Area, Scatter ve Histogram grafikleri desteklenmektedir.
 
-**Raporlar paneli**
-Geçmiş sorguların listelenip tekrar görüntülenebildiği bir panel eklendi.
+**Dışa aktarma
+Sorgu sonuçları CSV ve PDF formatlarında dışa aktarılabilmektedir. PDF raporları çok sayfalı tablo olarak oluşturulmaktadır.
 
-**Arayüz (`templates/`, `static/`)**
-Sprint 2'de işlevsel düzeyde bırakılan arayüz bu sprintte baştan tasarlandı: marka kimliği (logo, renk paleti, tipografi), giriş/kayıt ve veritabanı bağlantısı adımlarının ayrıştırılması, responsive düzen.
+**Raporlar Paneli
+Kullanıcıların gerçekleştirdiği sorgular oturum geçmişinde saklanmakta ve daha sonra tekrar görüntülenebilmektedir. Önceki sorgular aynı zamanda LLM'e bağlam sağlayarak çok adımlı doğal dil konuşmalarını desteklemektedir.
 
-### Güvenlik Yaklaşımı
+**Arayüz
+Arayüz tamamen yenilenerek marka kimliği oluşturulmuş; giriş, kayıt, e-posta doğrulama ve veritabanı bağlantısı adımları birbirinden ayrılmıştır. Responsive tasarım uygulanmış ve kullanıcı deneyimi iyileştirilmiştir.
 
-Sprint 2'deki çok katmanlı güvenlik denetimine ek olarak, bu sprintte yetkilendirme modeli olgunlaştırılmıştır:
+**Güvenlik Yaklaşımı
+Sprint 2'deki çok katmanlı güvenlik yapısı bu sprintte geliştirilmiştir.
 
-- **Yetkilendirmenin istemciden değil sunucudan belirlenmesi:** Önceki sürümde rol istemciden gelen bir değere güveniyordu — teorik olarak isteği değiştirerek yetki yükseltmek mümkündü. Bu ilk olarak, bağlanılan SQL Server girişinin gerçek izinlerine bakılarak düzeltildi; şirket/çalışan yönetimi eklenince yetkilendirme modeli, çalışana şirket yöneticisi tarafından atanan unvana (Çalışan / Müdür / Yönetici) dayanacak şekilde olgunlaştırıldı. Unvan, Supabase'deki çalışan kaydından sunucu tarafında okunur; istemciden gelen bir değere hâlâ güvenilmez — değişen kaynak, korunan ilke aynı kaldı.
-- **Kod tarafı doğrulama korunuyor:** Üretilen her SQL, çalıştırılmadan önce sunucuda bağımsız olarak sınıflandırılır (select/dml/ddl) ve bu sınıflandırma kullanıcının unvanına göre denetlenir; LLM'in beyanına güvenilmez.
-- **Kimlik doğrulama ile yetki ayrıştırıldı:** E-posta/şifre yalnızca uygulamaya erişimi; unvan ise verideki hangi işlemlerin yapılabileceğini belirler. İkisi ayrı katmanlardır.
-- **Şifre güvenliği:** Hesap şifreleri hiçbir zaman düz metin tutulmaz; kimlik doğrulama Supabase'e taşındıktan sonra şifre güvenliği Supabase'in kendi altyapısı tarafından yönetilmektedir.
+Yetkilendirme tamamen sunucu tarafında yapılmaktadır. Kullanıcının unvanı (Çalışan / Müdür / Yönetici) Supabase'den okunur; istemciden gönderilen hiçbir rol bilgisine güvenilmez.
+Her SQL sorgusu kod tarafında bağımsız olarak doğrulanır. Üretilen sorgu önce SELECT, DML veya DDL olarak sınıflandırılır; ardından kullanıcının yetkisine göre çalıştırılıp çalıştırılamayacağına karar verilir. LLM'in ürettiği sorgu doğrudan çalıştırılmaz.
+LLM yalnızca SQL üretir. SQL'in çalıştırılması, güvenlik kontrolleri ve rol denetimleri tamamen Python kodu tarafından gerçekleştirilir. Ayrıca hata oluşması durumunda sınırlı sayıda self-healing retry mekanizması ile sorgu yeniden üretilir.
+Kimlik doğrulama ile yetkilendirme birbirinden ayrılmıştır. E-posta ve şifre uygulamaya erişimi sağlarken, kullanıcının unvanı hangi SQL işlemlerini gerçekleştirebileceğini belirler.
+Şifre güvenliği Supabase üzerinde hash'lenerek saklanmakta; doğrulama kodları süreli (15 dakika) olarak oluşturulmaktadır.
 
 ### Demo Veri Seti
 Sprint 2'deki veri seti değişmeden kullanılmaya devam etmiştir.
