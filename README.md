@@ -338,6 +338,9 @@ Ekip içi iletişim; Notion üzerinde yürütülen görev kartları, Google Meet
 
 ## Sprint 3 Board Durumu
 
+<img width="1366" height="648" alt="image" src="https://github.com/user-attachments/assets/451701f4-9790-4fb7-8cc4-9ceb7e30b6fc" />
+
+
 ### Done (17)
 - Mevcut kod tabanının (frontend mimarisi, UI, UX, erişilebilirlik) uçtan uca gözden geçirilmesi
 - Form etiketlerinin (`label`) input'lara `for`/`id` ile programatik bağlanması
