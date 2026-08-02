@@ -37,8 +37,8 @@ Türkçe yorum olarak sunar.
 
 ## AskQL Kullanım ve Kurulum Kılavuzu
 
-[Kullanım kılavuzuna ulaşmak için tıklayın.](./AskQL%20Kullanim%20Kilavuzu.pdf)
-[Kurulum kılavuzu için tıklayın.](<./AskQL Kurulum Kılavuzu>)
+- [Kullanım kılavuzuna ulaşmak için tıklayın.](./AskQL%20Kullanim%20Kilavuzu.pdf)
+- [Kurulum kılavuzu için tıklayın.](<./AskQL Kurulum Kılavuzu>)
 
 
 ## Sistem Mimarisi
@@ -288,6 +288,7 @@ Sprint 2 sonunda uçtan uca çalışan hale getirilen uygulama, Sprint 3'te kiml
 ### Teknoloji Yığını
 | Katman | Teknoloji |
 |---|---|
+| E-posta Servisi | Brevo |
 | Web çatısı | Flask 3.0.3 |
 | LLM orkestrasyonu | LangChain |
 | LLM | OpenAI gpt-4o-mini (JSON mode) |
