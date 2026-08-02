@@ -35,6 +35,11 @@ Türkçe yorum olarak sunar.
 - Veri ekibi olmayan veya veri ekibi yoğun olan şirketler
 - Küçük ve orta ölçekli işletmelerde raporlama ihtiyacı olan yöneticiler
 
+## AskQL Kullanım Kılavuzu
+
+📄 [Kullanım kılavuzuna ulaşmak için tıklayın.](./AskQL%20Kullanim%20Kilavuzu.pdf)
+
+
 ## Sistem Mimarisi
 
 <img width="1693" height="929" alt="image" src="https://github.com/user-attachments/assets/ed3f235d-790c-40cd-b334-e8070ce7bf23" />
@@ -390,15 +395,5 @@ AskQL, bu sprintle birlikte sunuma hazır, uçtan uca çalışan ve Railway üze
 - Güvenliğin istemci tarafına bırakılmaması gerektiği, bu sprintte somut bir düzeltmeyle bir kez daha teyit edildi.
 - Sprint 3 kapanış toplantısı yapılarak, proje bu sprint ile tamamlanmıştır.
 
-# AskQL Kullanım Kılavuzu
 
 
-📖 [Kullanım Kılavuzuna Git](#askql-kullanım-kılavuzu)
-
-...
-...
-...
-
-## AskQL Kullanım Kılavuzu
-
-📄 [PDF olarak indir](./AskQL%20Kullanim%20Kilavuzu.pdf)
