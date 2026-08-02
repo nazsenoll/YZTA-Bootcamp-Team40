@@ -389,4 +389,3 @@ AskQL, bu sprintle birlikte sunuma hazır, uçtan uca çalışan ve Railway üze
 
 # AskQL Kullanım Kılavuzu
 
-[![Kullanıcı Kılavuzu](https://img.shields.io/badge/📄%20Kullan%C4%B1c%C4%B1%20K%C4%B1lavuzu-PDF-1B676A)](./AskQL_Kullanim_Kilavuzu.pdf)
