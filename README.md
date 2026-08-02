@@ -1,5 +1,7 @@
 # YZTA-Bootcamp-Team40
 
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/0d4c4959-e9d1-455a-9c75-730801c39f45" />
+
 ## Takım Rolleri
 
 | İsim | Rol | LinkedIn |
