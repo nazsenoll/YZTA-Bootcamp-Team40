@@ -304,31 +304,31 @@ Sprint 2 sonunda uçtan uca çalışan hale getirilen uygulama, Sprint 3'te kiml
 
 ### Modüller
 
-**Kimlik doğrulama (users_db.py + Brevo + Supabase)
+**Kimlik doğrulama (users_db.py + Brevo + Supabase)**
 Kimlik doğrulama katmanı Supabase üzerinde çalışmaktadır. Kullanıcı ve şirket bilgileri Supabase'de tutulurken, hesap oluşturma sırasında gönderilen 6 haneli doğrulama kodu ile e-posta doğrulaması Brevo üzerinden gerçekleştirilmektedir. Hesap doğrulanmadan sisteme giriş yapılamaz. Ayrıca yönetici tarafından eklenen çalışanlara geçici şifre oluşturularak Brevo aracılığıyla e-posta olarak iletilmektedir.
 
-**app.py — API Katmanı
+**app.py — API Katmanı**
 /api/register, /api/verify, /api/resend_code, /api/login, /api/logout, /api/change_password ve diğer API uç noktaları geliştirilmiştir. Kimlik doğrulaması gerektiren tüm işlemler login_required ile korunmaktadır. Ayrıca "Beni Hatırla" seçeneği sayesinde 30 güne kadar kalıcı oturum desteği sunulmaktadır.
 
-**db.py — Veritabanı ve Yetkilendirme
+**db.py — Veritabanı ve Yetkilendirme**
 SQL Server bağlantısı çok şirketli (multi-tenant) mimariye uygun şekilde yönetilmektedir. Üretilen SQL sorguları çalıştırılmadan önce sunucu tarafında bağımsız olarak sınıflandırılır (SELECT / DML / DDL) ve kullanıcının unvanına göre yetkilendirilir. SELECT ve yazma işlemleri farklı fonksiyonlar üzerinden yürütülmektedir.
 
-**Şirket ve çalışan yönetimi
+**Şirket ve çalışan yönetimi**
 Sisteme ilk kayıt olan kullanıcı otomatik olarak Yönetici unvanını alır ve şirketini oluşturur. Yönetici daha sonra şirkete Çalışan veya Müdür unvanıyla yeni kullanıcılar ekleyebilir. Yetkilendirme tamamen sunucu tarafında saklanan unvan bilgisine göre yapılmaktadır.
 
-**Grafik oluşturma
+**Grafik oluşturma**
 Sorgu sonucuna en uygun grafik türü LLM tarafından belirlenmekte; grafik oluşturma işlemi ise ayrı bir modül tarafından gerçekleştirilmektedir. Bar, Line, Pie, Area, Scatter ve Histogram grafikleri desteklenmektedir.
 
-**Dışa aktarma
+**Dışa aktarma**
 Sorgu sonuçları CSV ve PDF formatlarında dışa aktarılabilmektedir. PDF raporları çok sayfalı tablo olarak oluşturulmaktadır.
 
-**Raporlar Paneli
+**Raporlar Paneli**
 Kullanıcıların gerçekleştirdiği sorgular oturum geçmişinde saklanmakta ve daha sonra tekrar görüntülenebilmektedir. Önceki sorgular aynı zamanda LLM'e bağlam sağlayarak çok adımlı doğal dil konuşmalarını desteklemektedir.
 
-**Arayüz
+**Arayüz**
 Arayüz tamamen yenilenerek marka kimliği oluşturulmuş; giriş, kayıt, e-posta doğrulama ve veritabanı bağlantısı adımları birbirinden ayrılmıştır. Responsive tasarım uygulanmış ve kullanıcı deneyimi iyileştirilmiştir.
 
-**Güvenlik Yaklaşımı
+**Güvenlik Yaklaşımı**
 Sprint 2'deki çok katmanlı güvenlik yapısı bu sprintte geliştirilmiştir.
 
 Yetkilendirme tamamen sunucu tarafında yapılmaktadır. Kullanıcının unvanı (Çalışan / Müdür / Yönetici) Supabase'den okunur; istemciden gönderilen hiçbir rol bilgisine güvenilmez.
